@@ -145,7 +145,6 @@ clust=function(QCInjs,QCFeats,modelNames=c('VVE'),G=seq(1,100,by=3),report=FALSE
 #' @return deltaDist
 #' @return varClust
 #' @export
-#' @export
 ## Calculate drift clusters
 driftCalc=function(QCClust,smoothFunc=c('spline','loess'),spar=0.2,report=FALSE) {
 	if (missing(smoothFunc)) smoothFunc='spline'
