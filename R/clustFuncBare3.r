@@ -93,11 +93,11 @@ rmsDist=function(mat) {
 #' DC: Cluster features
 #'
 #' clust will perform clustering of features with similar drift pattern by projecting scaled QC features as coordinates in observation/injection space
-#' @param QCInjs
-#' @param QCFeats
-#' @param modelNames
-#' @param G
-#' @param report
+#' @param QCInjs vectors with QC injections in sequence
+#' @param QCFeats Feature matrix for QC injections: Scaled (but not centered) features as columns; Injections as rows
+#' @param modelNames Which 'mclust' models to consider (see mclust package for details)
+#' @param G Which number of clusters to consider (see mclust package for details)
+#' @param report boolean whether to print a pdf report of clustering results
 #' @return a clust object containing:
 #' @return QCInjs: as indata
 #' @return QCFeats: as indata
@@ -130,11 +130,21 @@ clust=function(QCInjs,QCFeats,modelNames=c('VVE'),G=seq(1,100,by=3),report=FALSE
 	return(list(QCInjs=QCInjs,QCFeats=QCFeats,BIC=mclBIC,clust=MC,BICTime=BICtime,clustTime=sumTime))
 }
 
-#' DC:
+#' DC: Calculate intensity drift per cluster
 #'
-#'
-#' @param
-#' @return
+#' Clustered, scaled QC features are pooled together and intensity drift patterns are modelled per cluster
+#' @param QCClust a clust object
+#' @param smoothFunc choice of regression function: spline or loess (defaults to spline)
+#' @param spar smoothing parameter for spline or loess
+#' @param report boolean whether to print a pdf report of drift models
+#' @return a driftCalc object containing:
+#' @return original information from clust object (indata) and
+#' @return actionInfo
+#' @return ratios
+#' @return corMat
+#' @return deltaDist
+#' @return varClust
+#' @export
 #' @export
 ## Calculate drift clusters
 driftCalc=function(QCClust,smoothFunc=c('spline','loess'),spar=0.2,report=FALSE) {
