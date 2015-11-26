@@ -38,3 +38,8 @@ These development and inner workings of these algorithms are reported in:
 
 Brunius C, Shi L and Landberg R. Within and between batch correction of LC-MS metabolomics data. Submitted manuscript.
 
+## Version history
+version | comment
+:------ | :------
+0.1.0 | Functions in place. Not fully roxygenised.
+
