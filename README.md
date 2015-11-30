@@ -34,7 +34,7 @@ Batch normalisation is achieved based on:
 - The choice between the two is based on a quality heuristic determining whether the QC/Ref is suitable for normalisation. Otherwise population normalisation is performed instead.
 
 ## Reference
-These development and inner workings of these algorithms are reported in:
+The development and inner workings of these algorithms are reported in:
 
 Brunius C, Shi L and Landberg R. Within and between batch correction of LC-MS metabolomics data. Submitted manuscript.
 
