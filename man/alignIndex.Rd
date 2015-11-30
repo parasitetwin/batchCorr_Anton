@@ -2,7 +2,7 @@
 % Please edit documentation in R/batchAlign5.R
 \name{alignIndex}
 \alias{alignIndex}
-\title{Find alignment candidates}
+\title{BA: Find alignment candidates}
 \usage{
 alignIndex(batchflag, flagType = c("Hard", "Soft", "All"), grpType = "Q",
   mzdiff = 0.005, rtdiff = 10, report = TRUE, reportName = "splits")

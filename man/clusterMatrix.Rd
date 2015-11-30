@@ -2,7 +2,7 @@
 % Please edit documentation in R/batchAlign5.R
 \name{clusterMatrix}
 \alias{clusterMatrix}
-\title{Sort features (alignment candidates) into clusters}
+\title{BA: Sort features (alignment candidates) into clusters}
 \usage{
 clusterMatrix(features)
 }

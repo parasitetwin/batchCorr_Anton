@@ -2,7 +2,7 @@
 % Please edit documentation in R/batchAlign5.R
 \name{plotClust}
 \alias{plotClust}
-\title{Plot the identified clusters}
+\title{BA: Plot the identified clusters}
 \usage{
 plotClust(batchflag, grpFlag, cluster, text, color = 2, mzwidth = 0.02,
   rtwidth = 100)

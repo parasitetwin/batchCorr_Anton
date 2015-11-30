@@ -2,7 +2,7 @@
 % Please edit documentation in R/batchAlign5.R
 \name{batchAlign}
 \alias{batchAlign}
-\title{Alignment of peaktable based on alignIndex and batchFlag data}
+\title{BA: Alignment of peaktable based on alignIndex and batchFlag data}
 \usage{
 batchAlign(batchflag, alignindex, peaktable_filled, meta)
 }

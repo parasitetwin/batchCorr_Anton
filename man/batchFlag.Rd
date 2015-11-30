@@ -2,7 +2,7 @@
 % Please edit documentation in R/batchAlign5.R
 \name{batchFlag}
 \alias{batchFlag}
-\title{Aggregate presense/missingness per batch}
+\title{BA: Aggregate presense/missingness per batch}
 \usage{
 batchFlag(PTnofill, meta, NAhard = 0.8, NAsoft = 0.5, quantileSoft = 0.1)
 }

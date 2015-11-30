@@ -1,8 +1,9 @@
-setwd("C:/R/QCData")                    # Specify work directory
-rm(list=ls())
-
-library(xcms)
-
+#' Extract m/z and rt from peak table
+#'
+#' Extract features from peak table and report their m/z and rt values
+#' @param PT a peak table with variables as columns
+#' @return a matrix with m/z and rt of features as columns
+#' @export
 peakInfo=function(PT) {
   peakInfo=matrix(unlist(strsplit(colnames(PT),'@')),ncol=2,byrow=TRUE)
   peakInfo[,1]=substr(peakInfo[,1],3,max(nchar(peakInfo[,1])))
@@ -12,12 +13,30 @@ peakInfo=function(PT) {
   return(peakInfo)
 }
 
+#' Coefficient of variation (CV)
+#'
+#' Calculates CV per column in a matrix. Aka relative standard deviation (RSD).
+#' @param mat a matrix with variables as columns
+#' @return a vector of CVs
+#' @export
+## Simple function for calculating cv per column (ie variable)
 CV=function(mat) {
   mean=apply(mat,2,function(x) mean(x,na.rm=TRUE))
   sd=apply(mat,2,function(x) sd(x,na.rm=TRUE))
   cv=sd/mean
 }
 
+#' BN: Info on reference samples aggregated on batch level
+#'
+#' Reference samples are aggregated on batch level
+#' @param PT a multi-batch master peak table
+#' @param meta metadata with batch (col1) and sample type (col2)
+#' @param grpType a sample type identifier for reference samples
+#' @param CVlimit CV criterion to pass for Ref samples per batch
+#' @return an object containing:
+#' @return CV: boolean per batch & feature in CV<limit
+#' @return aveInt: average reference intensity per batch & feature
+#' @export
 refOut=function(PT,meta,grpType='R',CVlimit=0.3) {
   batch=meta[,1]
   grp=meta[,2]
@@ -35,6 +54,18 @@ refOut=function(PT,meta,grpType='R',CVlimit=0.3) {
   return(list(CV=CVMat,aveInt=aveIntMat))
 }
 
+#' BN: Between batch normalisation by Ref samples
+#'
+#' Batches are normalised by Ref samples if passing heuristic distance criterion.
+#' @param PT a multi-batch master peak table
+#' @param meta metadata with batch (col1) and sample type (col2)
+#' @param refs a refOut object
+#' @param FClimit Fold-change criterion for intensity (in relation to average intensity FC between batches)
+#' @return an object containing:
+#' @return PTRef: Reference sample-normalised multi-batch peak table
+#' @return refCorr: Boolean matrix with info on which batches were normalised by reference samples
+#' @return PTOrg (indata peaktable)
+#' @export
 refCorr=function(PT,meta,refs,FCLimit=5) {
   batch=meta[,1]
   PTcorr=PT
@@ -81,16 +112,8 @@ refCorr=function(PT,meta,refs,FCLimit=5) {
         corrFact=refInt/aveInt[b,feat]
         PTcorr[batch==uniqBatch[b],feat]=PT[batch==uniqBatch[b],feat]*corrFact
       }
-      refCorrMat[,feat]=refCorr 
+      refCorrMat[,feat]=refCorr
     }
   }
   return(list(PTRef=PTcorr,refCorr=refCorrMat,PTOrg=PT))
 }
-
-featIntRat=aveInt[,c]/aveInt[1,c]
-
-
-PT=bAQR$PTalign
-peakInfo=peakInfo(PT)
-refs=refOut(PT,meta)
-RC=refCorr(PT,meta,refs,FCLimit=5)

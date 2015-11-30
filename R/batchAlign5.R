@@ -80,7 +80,7 @@ batchFlag=function(PTnofill,meta,NAhard=0.8,NAsoft=0.5,quantileSoft=0.1) {
   return(batchFlag=list(meta=batchMeta,flagAll=flagAll,flagType=flagType,flagHard=flagHard,flagSoft=flagSoft,mz=peakInfo[,1],rt=peakInfo[,2]))
 }
 
-#' Find alignment candidates
+#' BA: Find alignment candidates
 #'
 #' align will find candidates for alignment among features that have systematic missingness "within box" of maximum m/z & rt differences. Used internally.
 #' @param flags a table of presentness/missingness per batch x sample type
@@ -172,7 +172,7 @@ align=function(flags,mz,rt,mzdiff=0.005,rtdiff=10) {
   return(list(events=event,features=features,clusters=clusters))
 }
 
-#' Sort features (alignment candidates) into clusters
+#' BA: Sort features (alignment candidates) into clusters
 #'
 #' clusterMatrix will sort features into clusters. Used internally.
 #' @param features all features involved in possible alignments

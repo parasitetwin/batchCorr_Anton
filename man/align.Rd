@@ -2,7 +2,7 @@
 % Please edit documentation in R/batchAlign5.R
 \name{align}
 \alias{align}
-\title{Find alignment candidates}
+\title{BA: Find alignment candidates}
 \usage{
 align(flags, mz, rt, mzdiff = 0.005, rtdiff = 10)
 }

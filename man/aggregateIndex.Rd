@@ -2,7 +2,7 @@
 % Please edit documentation in R/batchAlign5.R
 \name{aggregateIndex}
 \alias{aggregateIndex}
-\title{Aggregate clustering information from two sample types}
+\title{BA: Aggregate clustering information from two sample types}
 \usage{
 aggregateIndex(aI1, aI2)
 }

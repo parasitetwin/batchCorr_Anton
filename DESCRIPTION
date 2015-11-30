@@ -1,14 +1,13 @@
 Package: batchCorr
 Type: Package
 Title: Within And Between Batch Correction Of LC-MS Metabolomics Data
-Version: 0.1.0
-Date: 2015-11-24
+Version: 0.1.1
+Date: 2015-11-30
 Author: Carl Brunius <carl.brunius@slu.se>
 Maintainer: Carl Brunius <carl.brunius@slu.se>
-Description: Batch alignment (of systematic misalignment between batches),
-    Cluster-based within batch intensity drift correction,
-    Between-batch normalization based on quality heuristic (choosing either
-    QC/Ref normalization of population/median normalization).
+Description: (BA) Batch alignment (of systematic misalignment between batches),
+    (DC) Cluster-based within batch intensity drift correction,
+    (BN) Between-batch normalization based on Ref sample intensity if passing quality heuristic.
 License: GPL-2
 Imports:
     xcms,

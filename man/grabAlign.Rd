@@ -2,7 +2,7 @@
 % Please edit documentation in R/batchAlign5.R
 \name{grabAlign}
 \alias{grabAlign}
-\title{Grab batch relevant data for a subtype of samples}
+\title{BA: Grab batch relevant data for a subtype of samples}
 \usage{
 grabAlign(XS, batch, grp)
 }

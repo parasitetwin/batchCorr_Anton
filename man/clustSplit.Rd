@@ -2,7 +2,7 @@
 % Please edit documentation in R/batchAlign5.R
 \name{clustSplit}
 \alias{clustSplit}
-\title{Split overcrowded clusters into subclusters}
+\title{BA: Split overcrowded clusters into subclusters}
 \usage{
 clustSplit(clustFlags, mz, rt)
 }

@@ -223,32 +223,42 @@ driftCalc=function(QCClust,smoothFunc=c('spline','loess'),spar=0.2,report=FALSE)
 	return(QCDriftCalc)
 }
 
-#' DC:
+#' DC: Correct for intensity drift per cluster
 #'
-#'
-#' @param
-#' @return
+#' Perform signal intensity drift correction if resulting in increased quality of data (measured by reduced root-mean-squared distances of reference samples).
+#' @param QCDriftCalc a DriftCalc object
+#' @param refList a reference sample onject with 'inj' and 'Feats'
+#' @param refType at present, the options "one" and "none" are supported for one or no reference samples present.
+#' @param CorrObj a batch object to be corrected with 'inj' and 'Feats'. If not present defaults to the QC object
+#' @param report boolean whether to print a pdf report of drift models
+#' @return A Corr object consisting of:
+#' @return original information from DriftCalc object (indata) and
+#' @return updated actionInfo (actions taken per cluster)
+#' @return QCFeatsCorr Drift-corrected QC features
+#' @return refType (indata)
+#' @return drift corrected reference samples
+#' @return drift corrected corr/batch samples
 #' @export
 ## Perform drift correction for clusters IF rmsdRef is improved
-driftCorr3=function(QCClean,refList=NA,refType=c('none','one','many'),CorrObj=NA,report=FALSE) {
+driftCorr3=function(QCDriftCalc,refList=NA,refType=c('none','one','many'),CorrObj=NA,report=FALSE) {
 	if (missing(refType)) refType='none'
 	if (refType=='many') {
 		cat('\nMultiple reference samples not yet implemented\n')
 		break
 	}
-	deltaDist=QCClean$deltaDist
-	varClust=QCClean$varClust
-	removeFeats=QCClean$removeFeats
+	deltaDist=QCDriftCalc$deltaDist
+	varClust=QCDriftCalc$varClust
+	removeFeats=QCDriftCalc$removeFeats
 	if (!is.null(removeFeats)) {
-	  keepClust=QCClean$keepClust
-	  corrQCTemp=corrQC=QCClean$QCFeatsClean
+	  keepClust=QCDriftCalc$keepClust
+	  corrQCTemp=corrQC=QCDriftCalc$QCFeatsClean
 	} else {
-	  keepClust=1:(QCClean$clust$G)
-	  corrQCTemp=corrQC=QCClean$QCFeats
+	  keepClust=1:(QCDriftCalc$clust$G)
+	  corrQCTemp=corrQC=QCDriftCalc$QCFeats
 	}
-	injQC=QCClean$QCInjs
-	corMat=QCClean$corMat
-	clustComm=as.character(QCClean$actionInfo$action)
+	injQC=QCDriftCalc$QCInjs
+	corMat=QCDriftCalc$corMat
+	clustComm=as.character(QCDriftCalc$actionInfo$action)
 	ordDist=order(deltaDist)
 	ordDist=ordDist[ordDist%in%keepClust]
 	if (refType=='one') {
@@ -301,38 +311,46 @@ driftCorr3=function(QCClean,refList=NA,refType=c('none','one','many'),CorrObj=NA
 	if (report==TRUE) {
 		pdf(file=paste('Hist_Corrected_',format(Sys.time(),format="%y%m%d_%H%M"),'.pdf',sep=''))
 	  if (!is.null(removeFeats)) {
-	    hist(cv(QCClean$QCFeatsClean),30,col=rgb(0,0,0,1),main='Cluster correction',xlab='CV (feature)')
+	    hist(cv(QCDriftCalc$QCFeatsClean),30,col=rgb(0,0,0,1),main='Cluster correction',xlab='CV (feature)')
 	  } else {
-	    hist(cv(QCClean$QCFeats),30,col=rgb(0,0,0,1),main='Cluster correction',xlab='CV (feature)')
+	    hist(cv(QCDriftCalc$QCFeats),30,col=rgb(0,0,0,1),main='Cluster correction',xlab='CV (feature)')
 	  }
 		hist(cv(corrQC),20,col=rgb(1,1,1,.5),add=TRUE)
 		legend('topright',legend=c('Clean','Corrected'),fill=c(rgb(0,0,0,1),rgb(1,1,1,0.5)))
 		dev.off()
 	}
-	QCClean$actionInfo$action=clustComm
-	QCClean$QCFeatsCorr=corrQC
-	QCClean$RefType=refType
+	QCDriftCalc$actionInfo$action=clustComm
+	QCDriftCalc$QCFeatsCorr=corrQC
+	QCDriftCalc$RefType=refType
 	if (refType=='one') {
-  	QCClean$RefInjs=injRef
-  	QCClean$RefFeats=refList$Feats
-  	QCClean$RefFeatsClean=refClean
-  	QCClean$RefFeatsCorr=corrRef
+  	QCDriftCalc$RefInjs=injRef
+  	QCDriftCalc$RefFeats=refList$Feats
+  	QCDriftCalc$RefFeatsClean=refClean
+  	QCDriftCalc$RefFeatsCorr=corrRef
 	}
-	QCClean$TestInjs=injTest
-	QCClean$TestFeats=CorrObj$Feats
-	# QCClean$TestFeatsClean=
-	QCClean$TestFeatsCorr=corrTest
-	QCCorr=QCClean
+	QCDriftCalc$TestInjs=injTest
+	QCDriftCalc$TestFeats=CorrObj$Feats
+	# QCDriftCalc$TestFeatsClean=
+	QCDriftCalc$TestFeatsCorr=corrTest
+	QCCorr=QCDriftCalc
 	return(QCCorr)
 }
 
-#' DC:
+#' DC: Remove features not passing QC test
 #'
-#'
-#' @param
-#' @return
+#' Remove those features with CV(QC)>limit (defined by user)
+#' @param QCCorr a Corr object
+#' @param CVlimit user-defined QC riterion to pass. Defaults to 0.2
+#' @param report boolean whether to print a pdf report of drift models
+#' @return A Clean object consisting of:
+#' @return original information from Corr object (indata) and
+#' @return updated actionInfo (actions taken per cluster)
+#' @return QCFeatsFinal: Final peaktable (scaled) for QC samples
+#' @return TestFeatsFinal: Final peaktable for batch samples
+#' @return finalVars: All features kept within the final peaktable
+#' @return QCcvs: CVs per features kept within the final peaktable
 #' @export
-## Remove individual variables with CV>0.2
+## Remove individual variables with CV>limit
 cleanVar3=function(QCCorr,CVlimit=.2,report=FALSE) {
 	QCFeats=QCCorr$QCFeats
 	removeFeats=QCCorr$removeFeats
@@ -392,11 +410,17 @@ cleanVar3=function(QCCorr,CVlimit=.2,report=FALSE) {
 	return(QCFinal)
 }
 
-#' DC:
+#' DC: Grab samples for drift correction
 #'
-#'
-#' @param
-#' @return
+#' Wrapper function for grabbing QCs, reference and entire batch samples from XCMS-set
+#' @param XC an XCMS object
+#' @param batch a batch identifier
+#' @param QC a QC sample identifier
+#' @param Ref a reference sample identifier
+#' @return An object containing:
+#' @return QC: A QC object
+#' @return Ref: A Ref object
+#' @return Batch: A batch object
 #' @export
 ## Wrapper function for grabbing QCs, reference and entire batch samples from XCMS-set
 grabWrap=function(XS,batch,QC='QC',Ref='Ref') {
@@ -406,13 +430,16 @@ grabWrap=function(XS,batch,QC='QC',Ref='Ref') {
 	return(list(QC=QCObj,Ref=RefObj,Batch=BatchObj))
 }
 
-#' DC:
+#' DC: Perform drift correction
 #'
-#'
-#' @param
-#' @return
+#' Wrapper function for all drift subfunctions (clust, driftCalc, driftCorr, cleanVar)
+#' @param grabObj a grabWrap object
+#' @param refType type of reference sample strategy used (at present "one" or "none" supported)
+#' @param CVlimit QC feature CV limit as final feature inclusion criterion
+#' @param report boolean whether to print a pdf report of drift models
+#' @return A drift corrected object with QC features CV<limit containing final peak table
 #' @export
-## Wrapper function for all drift subfunctions (clust, driftCalc, cleanClust, driftCorr, cleanVar)
+## Wrapper function for all drift subfunctions (clust, driftCalc, driftCorr, cleanVar)
 driftWrap3=function(grabObj,refType,CVlimit=0.3,report=FALSE) {
 	QCObj=grabObj$QC
 	RefObj=grabObj$Ref

@@ -2,7 +2,7 @@
 % Please edit documentation in R/batchAlign5.R
 \name{plotAlign}
 \alias{plotAlign}
-\title{Plot clusters of aligned features}
+\title{BA: Plot clusters of aligned features}
 \usage{
 plotAlign(batchflag, alignindex, clust, plotType = c("plot", "pdf", "png"),
   reportName = "clustPlot", mzwidth = 0.02, rtwidth = 100)
