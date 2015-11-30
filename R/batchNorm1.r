@@ -36,7 +36,7 @@ refOut=function(PT,meta,grpType='R',CVlimit=0.3) {
   for (b in 1:length(uniqBatch)) {
     bat=uniqBatch[b]
     PTbatch=PT[batch==bat & grp==grpType,]
-    CVMat[b,]=ifelse(CV(PTbatch)<=CVlimit,TRUE,FALSE)
+    CVMat[b,]=ifelse(cv(PTbatch)<=CVlimit,TRUE,FALSE)
     aveIntMat[b,]=apply(PTbatch,2,mean)
   }
   return(list(CV=CVMat,aveInt=aveIntMat))
