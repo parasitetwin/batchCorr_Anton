@@ -14,19 +14,6 @@ peakInfo=function(PT,start=3) {
   return(peakInfo)
 }
 
-#' Coefficient of variation (CV)
-#'
-#' Calculates CV per column in a matrix. Aka relative standard deviation (RSD).
-#' @param mat a matrix with variables as columns
-#' @return a vector of CVs
-#' @export
-## Simple function for calculating cv per column (ie variable)
-CV=function(mat) {
-  mean=apply(mat,2,function(x) mean(x,na.rm=TRUE))
-  sd=apply(mat,2,function(x) sd(x,na.rm=TRUE))
-  cv=sd/mean
-}
-
 #' BN: Info on reference samples aggregated on batch level
 #'
 #' Reference samples are aggregated on batch level
