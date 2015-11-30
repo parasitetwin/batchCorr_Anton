@@ -4,12 +4,15 @@
 \alias{batchFlag}
 \title{BA: Aggregate presense/missingness per batch}
 \usage{
-batchFlag(PTnofill, meta, NAhard = 0.8, NAsoft = 0.5, quantileSoft = 0.1)
+batchFlag(PTnofill, meta, peakInfo, NAhard = 0.8, NAsoft = 0.5,
+  quantileSoft = 0.1)
 }
 \arguments{
 \item{PTnofill}{a peaktable with missing values (ie without either hard filling or imputation)}
 
 \item{meta}{a matrix of metadata with batch in column 1 and sample type in column 2}
+
+\item{peakInfo}{a matrix with m/z (col1) and rt (col2) of features (rows)}
 
 \item{NAhard}{proportion of NAs within batch for feature to be considered missing}
 

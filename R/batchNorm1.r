@@ -2,11 +2,12 @@
 #'
 #' Extract features from peak table and report their m/z and rt values
 #' @param PT a peak table with variables as columns
+#' @param start character from which to start the read of peakInfo (from PT colnames)
 #' @return a matrix with m/z and rt of features as columns
 #' @export
-peakInfo=function(PT) {
+peakInfo=function(PT,start=3) {
   peakInfo=matrix(unlist(strsplit(colnames(PT),'@')),ncol=2,byrow=TRUE)
-  peakInfo[,1]=substr(peakInfo[,1],3,max(nchar(peakInfo[,1])))
+  peakInfo[,1]=substr(peakInfo[,1],start,max(nchar(peakInfo[,1])))
   peakInfo=matrix(as.numeric(peakInfo),ncol=2)
   colnames(peakInfo)=c('mz','rt')
   rownames(peakInfo)=paste('feature',1:nrow(peakInfo),sep='_')

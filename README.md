@@ -41,6 +41,7 @@ Brunius C, Shi L and Landberg R. Within and between batch correction of LC-MS me
 ## Version history
 version | comment
 :------ | :------
+0.1.2 | batchFlag: externalised peakInfo (updated peakInfo() to include starting character) 
 0.1.1 | Roxygenised. Successful build.
 0.1.0 | Functions in place. Not fully roxygenised.
 

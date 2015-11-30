@@ -4,10 +4,12 @@
 \alias{peakInfo}
 \title{Extract m/z and rt from peak table}
 \usage{
-peakInfo(PT)
+peakInfo(PT, start = 3)
 }
 \arguments{
 \item{PT}{a peak table with variables as columns}
+
+\item{start}{character from which to start the read of peakInfo (from PT colnames)}
 }
 \value{
 a matrix with m/z and rt of features as columns

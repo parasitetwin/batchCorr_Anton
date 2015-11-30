@@ -32,6 +32,7 @@ grabAlign=function(XS,batch,grp) {
 #' batchFlag will aggregate presentness/missingness per feature at batch level within the combination: batch x sample type
 #' @param PTnofill a peaktable with missing values (ie without either hard filling or imputation)
 #' @param meta a matrix of metadata with batch in column 1 and sample type in column 2
+#' @param peakInfo a matrix with m/z (col1) and rt (col2) of features (rows)
 #' @param NAhard proportion of NAs within batch for feature to be considered missing
 #' @param NAsoft experimental: Use at own risk
 #' @param quantileSoft experimental: Use at own risk
@@ -43,7 +44,7 @@ grabAlign=function(XS,batch,grp) {
 #' @return flagSoft: experimental: Use at own risk
 #' @return flagType: experimental: Use at own risk
 #' @export
-batchFlag=function(PTnofill,meta,NAhard=0.8,NAsoft=0.5,quantileSoft=0.1) {
+batchFlag=function(PTnofill,meta,peakInfo,NAhard=0.8,NAsoft=0.5,quantileSoft=0.1) {
   quant=quantile(PTnofill,quantileSoft,na.rm=TRUE)
   batch=meta[,1]
   uniqBatch=unique(batch)
@@ -54,11 +55,6 @@ batchFlag=function(PTnofill,meta,NAhard=0.8,NAsoft=0.5,quantileSoft=0.1) {
   colnames(flagAll)=colnames(flagType)=colnames(PTnofill)
   batchMeta=matrix(nrow=n,ncol=2)
   colnames(batchMeta)=c('batch','grp')
-  peakInfo=matrix(unlist(strsplit(colnames(PTnofill),'@')),ncol=2,byrow=TRUE)
-  peakInfo[,1]=substr(peakInfo[,1],3,max(nchar(peakInfo[,1])))
-  peakInfo=matrix(as.numeric(peakInfo),ncol=2)
-  colnames(peakInfo)=c('mz','rt')
-  rownames(peakInfo)=paste('feature',1:nrow(peakInfo),sep='_')
   i=0
   for (b in uniqBatch) {
     for (g in uniqGrp) {
