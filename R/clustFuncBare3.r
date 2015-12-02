@@ -413,7 +413,7 @@ cleanVar3=function(QCCorr,CVlimit=.2,report=FALSE) {
 #' DC: Grab samples for drift correction
 #'
 #' Wrapper function for grabbing QCs, reference and entire batch samples from XCMS-set
-#' @param XC an XCMS object
+#' @param XS an XCMS object
 #' @param batch a batch identifier
 #' @param QC a QC sample identifier
 #' @param Ref a reference sample identifier

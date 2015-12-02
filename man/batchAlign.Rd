@@ -7,13 +7,13 @@
 batchAlign(batchflag, alignindex, peaktable_filled, meta)
 }
 \arguments{
+\item{batchflag}{a table of presentness/missingness per batch x sample type for the features within cluster}
+
+\item{alignindex}{An object (list) consisting of alignment information}
+
 \item{peaktable_filled}{a peaktable without missing values (ie after hard filling or imputation)}
 
 \item{meta}{a matrix of metadata with batch in column 1 and sample type in column 2}
-
-\item{batchFlag}{a table of presentness/missingness per batch x sample type for the features within cluster}
-
-\item{alignIndex}{An object (list) consisting of alignment information}
 }
 \value{
 An object (list) consisting of the following features:

@@ -8,6 +8,8 @@ plotClust(batchflag, grpFlag, cluster, text, color = 2, mzwidth = 0.02,
   rtwidth = 100)
 }
 \arguments{
+\item{batchflag}{a table of presentness/missingness per batch x sample type for the features within cluster}
+
 \item{grpFlag}{a vector corresponding to the rows of batchFlag used for sample type}
 
 \item{cluster}{extracted cluster to be plotted}
@@ -19,8 +21,6 @@ plotClust(batchflag, grpFlag, cluster, text, color = 2, mzwidth = 0.02,
 \item{mzwidth}{plot span of m/z}
 
 \item{rtwidth}{plot span of rt}
-
-\item{batchFlag}{a table of presentness/missingness per batch x sample type for the features within cluster}
 }
 \description{
 plotClust will plot clusters identified based on sample type. Used internally.

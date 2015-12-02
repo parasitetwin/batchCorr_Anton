@@ -48,7 +48,7 @@ refOut=function(PT,meta,grpType='R',CVlimit=0.3) {
 #' @param PT a multi-batch master peak table
 #' @param meta metadata with batch (col1) and sample type (col2)
 #' @param refs a refOut object
-#' @param FClimit Fold-change criterion for intensity (in relation to average intensity FC between batches)
+#' @param FCLimit Fold-change criterion for intensity (in relation to average intensity FC between batches)
 #' @return an object containing:
 #' @return PTRef: Reference sample-normalised multi-batch peak table
 #' @return refCorr: Boolean matrix with info on which batches were normalised by reference samples

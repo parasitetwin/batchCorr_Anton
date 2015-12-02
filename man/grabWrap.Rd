@@ -7,13 +7,13 @@
 grabWrap(XS, batch, QC = "QC", Ref = "Ref")
 }
 \arguments{
+\item{XS}{an XCMS object}
+
 \item{batch}{a batch identifier}
 
 \item{QC}{a QC sample identifier}
 
 \item{Ref}{a reference sample identifier}
-
-\item{XC}{an XCMS object}
 }
 \value{
 An object containing:

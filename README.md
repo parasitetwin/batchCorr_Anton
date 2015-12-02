@@ -1,6 +1,12 @@
 # batchCorr
 Within and between batch correction of LC-MS metabolomics data
 
+## Installation
+Install devtools to be able to install packages from GitHub
+Then install `batchCorr` package by:
+`devtools::install_github("CarlBrunius/batchCorr")`
+
+## Description
 This is a repository containing functions within three areas of batch correction. These algorithms were originally developed 
 to increase quality and information content in data from LC-MS metabolomics. However, the algorithms should be applicable to 
 other data structures/origins, where within and between batch irregularities occur.
@@ -13,13 +19,13 @@ Batch alignment | BA | Functions to align features that are originally systemati
 Drift correction | DC | Functions to perform within batch intensity drift correction
 Batch normalisation | BN | Funtions to perform between batch normalisation
 
-## Batch alignment 
+### Batch alignment 
 Batch alignment is achieved based on three concepts:
 - Aggregation of feature presence/missingness on batch level.
 - Identifying features with missingness within "the box", i.e. sufficiently similar in retention time and m/z.
 - Ensuring orthogonal batch presence among feature alignment candidates.
 
-## Drift correction
+### Drift correction
 Drift correction is achieved based on:
 - Clustering is performed on features in observation space (as opposed to the normally used observations in feature space)
 - Clustering provides a tradeoff between 
@@ -27,7 +33,7 @@ Drift correction is achieved based on:
   - power per drift pattern
 - Unbiased clustering is achieved using the Bayesian 'mclust' package
 
-## Batch normalisation
+### Batch normalisation
 Batch normalisation is achieved based on:
 - QC/Reference (standard normalisation) or
 - Population (median normalisation)
@@ -41,6 +47,7 @@ Brunius C, Shi L and Landberg R. Within and between batch correction of LC-MS me
 ## Version history
 version | comment
 :------ | :------
+0.1.4 | Added workflow.R under `inst/`, roxygenised data and updated README.
 0.1.3 | Added data and data-raw
 0.1.2 | batchFlag: externalised peakInfo (updated peakInfo() to include starting character) 
 0.1.1 | Roxygenised. Successful build.

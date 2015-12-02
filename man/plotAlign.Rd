@@ -8,6 +8,10 @@ plotAlign(batchflag, alignindex, clust, plotType = c("plot", "pdf", "png"),
   reportName = "clustPlot", mzwidth = 0.02, rtwidth = 100)
 }
 \arguments{
+\item{batchflag}{a table of presentness/missingness per batch x sample type for the features within cluster}
+
+\item{alignindex}{An object (list) consisting of alignment information}
+
 \item{clust}{which cluster(s) to plot. If missing, plots all clusters.}
 
 \item{plotType}{Whether to plot internally ('plot'), to pdf ('pdf') or png ('png') file.}
@@ -17,10 +21,6 @@ plotAlign(batchflag, alignindex, clust, plotType = c("plot", "pdf", "png"),
 \item{mzwidth}{plot span of m/z}
 
 \item{rtwidth}{plot span of rt}
-
-\item{batchFlag}{a table of presentness/missingness per batch x sample type for the features within cluster}
-
-\item{alignIndex}{An object (list) consisting of alignment information}
 }
 \description{
 plotAlign will plot clusters of aligned features

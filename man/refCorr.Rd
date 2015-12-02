@@ -13,7 +13,7 @@ refCorr(PT, meta, refs, FCLimit = 5)
 
 \item{refs}{a refOut object}
 
-\item{FClimit}{Fold-change criterion for intensity (in relation to average intensity FC between batches)}
+\item{FCLimit}{Fold-change criterion for intensity (in relation to average intensity FC between batches)}
 }
 \value{
 an object containing:

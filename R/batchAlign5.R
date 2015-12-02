@@ -250,7 +250,7 @@ clustSplit=function(clustFlags,mz,rt) {
 #' BA: Plot the identified clusters
 #'
 #' plotClust will plot clusters identified based on sample type. Used internally.
-#' @param batchFlag a table of presentness/missingness per batch x sample type for the features within cluster
+#' @param batchflag a table of presentness/missingness per batch x sample type for the features within cluster
 #' @param grpFlag a vector corresponding to the rows of batchFlag used for sample type
 #' @param cluster extracted cluster to be plotted
 #' @param text cluster identifier
@@ -279,7 +279,7 @@ plotClust=function(batchflag,grpFlag,cluster,text,color=2,mzwidth=0.02,rtwidth=1
 #' BA: Find alignment candidates
 #'
 #' alignIndex will find features systematically misaligned between batches using "sample type" information.
-#' @param batchFlag a table of presentness/missingness per batch x sample type for the features within cluster
+#' @param batchflag a table of presentness/missingness per batch x sample type for the features within cluster
 #' @param flagType This is experimental. Use at your own risk.
 #' @param grpType sample type to be used to find batch alignments
 #' @param mzdiff maximum distance in m/z to be considered for alignment
@@ -341,8 +341,8 @@ alignIndex=function(batchflag,flagType=c('Hard','Soft','All'),grpType='Q',mzdiff
 #' BA: Plot clusters of aligned features
 #'
 #' plotAlign will plot clusters of aligned features
-#' @param batchFlag a table of presentness/missingness per batch x sample type for the features within cluster
-#' @param alignIndex An object (list) consisting of alignment information
+#' @param batchflag a table of presentness/missingness per batch x sample type for the features within cluster
+#' @param alignindex An object (list) consisting of alignment information
 #' @param clust which cluster(s) to plot. If missing, plots all clusters.
 #' @param plotType Whether to plot internally ('plot'), to pdf ('pdf') or png ('png') file.
 #' @param reportName name of plotfile
@@ -400,8 +400,8 @@ aggregateIndex=function(aI1,aI2) {
 #' BA: Alignment of peaktable based on alignIndex and batchFlag data
 #'
 #' batchAlign will use the 'batchFlag' and 'alignIndex' information to align sample peaks that are systematically misaligned across batches.
-#' @param batchFlag a table of presentness/missingness per batch x sample type for the features within cluster
-#' @param alignIndex An object (list) consisting of alignment information
+#' @param batchflag a table of presentness/missingness per batch x sample type for the features within cluster
+#' @param alignindex An object (list) consisting of alignment information
 #' @param peaktable_filled a peaktable without missing values (ie after hard filling or imputation)
 #' @param meta a matrix of metadata with batch in column 1 and sample type in column 2
 #' @return An object (list) consisting of the following features:

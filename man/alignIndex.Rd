@@ -8,6 +8,8 @@ alignIndex(batchflag, flagType = c("Hard", "Soft", "All"), grpType = "Q",
   mzdiff = 0.005, rtdiff = 10, report = TRUE, reportName = "splits")
 }
 \arguments{
+\item{batchflag}{a table of presentness/missingness per batch x sample type for the features within cluster}
+
 \item{flagType}{This is experimental. Use at your own risk.}
 
 \item{grpType}{sample type to be used to find batch alignments}
@@ -19,8 +21,6 @@ alignIndex(batchflag, flagType = c("Hard", "Soft", "All"), grpType = "Q",
 \item{report}{boolean for plotting results of owercrowded cluster splitting for visual examination}
 
 \item{reportName}{string with name of report file}
-
-\item{batchFlag}{a table of presentness/missingness per batch x sample type for the features within cluster}
 }
 \value{
 An object (list) consisting of the following features:
