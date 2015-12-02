@@ -2,8 +2,10 @@
 Within and between batch correction of LC-MS metabolomics data
 
 ## Installation
-Install devtools to be able to install packages from GitHub
+Install devtools to be able to install packages from GitHub.
+
 Then install `batchCorr` package by:
+
 `devtools::install_github("CarlBrunius/batchCorr")`
 
 ## Description
@@ -45,11 +47,11 @@ The development and inner workings of these algorithms are reported in:
 Brunius C, Shi L and Landberg R. Within and between batch correction of LC-MS metabolomics data. Submitted manuscript.
 
 ## Version history
-version | comment
-:------ | :------
-0.1.4 | Added workflow.R under `inst/`, roxygenised data and updated README.
-0.1.3 | Added data and data-raw
-0.1.2 | batchFlag: externalised peakInfo (updated peakInfo() to include starting character) 
-0.1.1 | Roxygenised. Successful build.
-0.1.0 | Functions in place. Not fully roxygenised.
+version | date | comment
+:------ | :--- | :------
+0.1.4 | 15-12-03 | Added workflow.R under `inst/`, roxygenised data and updated README.
+0.1.3 | 15-12-03 | Added data and data-raw
+0.1.2 | | batchFlag: externalised peakInfo (updated peakInfo() to include starting character) 
+0.1.1 | | Roxygenised. Successful build.
+0.1.0 | | Functions in place. Not fully roxygenised.
 
