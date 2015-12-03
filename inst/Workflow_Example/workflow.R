@@ -65,5 +65,9 @@ bA=batchAlign(bF,aQR,PTfill,meta)
 PT=bA$PTalign
 
 
-###############################
+#########################################
 ## Perform within batch drift corrections
+
+
+################################################
+## Perform between batch intensity normalisation
