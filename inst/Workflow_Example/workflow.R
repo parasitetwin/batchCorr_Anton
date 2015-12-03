@@ -100,3 +100,4 @@ PT_RefNorm=RC$PTRef
 
 # NB: Final normalization is not complete!!!
 # Batches where Ref heuristic criterion is not passed still need to be population normalized...
+# Info on which batches need to be population normalized is found in RC$refCorr
