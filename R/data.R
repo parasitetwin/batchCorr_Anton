@@ -21,7 +21,9 @@
 #' meta
 #'
 #' Metadata for the injections in PTfill and PTnofill
+#'
 #' Col 1: Batch identifier
+#'
 #' Col 2: Sample type identifier (Q for QC and R for Ref)
 #'
 #' @format A data frame with 90 observations of 2 variables

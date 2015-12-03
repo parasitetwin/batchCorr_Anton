@@ -71,3 +71,32 @@ PT=bA$PTalign
 
 ################################################
 ## Perform between batch intensity normalisation
+
+# Extract aligned peak table
+PT=bAQR$PTalign
+peakInfo=peakInfo(PT)
+# Aggregate ref sample info on batch level
+refs=refOut(PT,meta)
+# Total number of batch features
+allBFeats=prod(dim(RC$refCorr))
+# Check different fold change limit-settings
+fcs=seq(1.2,10,by=0.2)
+propCorr=numeric(length(fcs))
+c=0
+for (fc in fcs) {
+  c=c+1
+  cat(c)
+  RC=refCorr(PT,meta,refs,FCLimit=fc)
+  # Find proportion of batch features normalized by reference samples under FClimit constraint.
+  propCorr[c]=sum(RC$refCorr)/allBFeats
+}
+# Plot supplementary figure for FC limit determination
+plot(fcs,propCorr,xlab='Fold change limit', ylab='Proportion normalized by reference samples')
+lines(fcs,propCorr)
+# Perform ref normalization using FClimit=5
+RC=refCorr(PT,meta,refs,FCLimit=fc)
+# Extract reference normalised peak table
+PT_RefNorm=RC$PTRef
+
+# NB: Final normalization is not complete!!!
+# Batches where Ref heuristic criterion is not passed still need to be population normalized...
