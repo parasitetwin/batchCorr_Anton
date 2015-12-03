@@ -8,7 +8,7 @@ Then install `batchCorr` package by:
 
 `devtools::install_github("CarlBrunius/batchCorr")`
 
-In addition to all relevant functions, data is provided to accurately reproduce figures from the original Brunius et al paper (see below).
+In addition to functions relevant for within/between batch correction, data is provided to accurately reproduce figures from the original Brunius et al paper (see below).
 
 ## Workflow
 After installation, a `Workflow_Example` folder is created in the `batchCorr` library (in your R library folder). This contains code on how the package was used to perform within/between batch correction and reproduce figures from the original Brunius et al paper (see below).
