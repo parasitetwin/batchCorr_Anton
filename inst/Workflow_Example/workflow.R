@@ -9,7 +9,7 @@ filepath="C:/R/QCData/OrgData"  # Specify directory of centroid files
 QC1=xcmsSet(filepath,method='centWave',prefilter=c(3,440),peakwidth=c(5,76),snthresh=6,mzdiff=0.0045,ppm=15)
 QC2=group(QC1,bw=10,minfrac=0.75,minsamp=1,mzwid=0.015,sleep=0)
 QC3=retcor(QC2, family="s", span=0.2)
-QC_nofill=group(QC3,bw=1.5,mzwid=0.015,minfrac=.75)
+QC_nofill=group(QC3,bw=1,mzwid=0.015,minfrac=.75)
 QC_fill=fillPeaks(QC_nofill,method='chrom')
 
 ## Organise into peaktable with missing data
@@ -52,8 +52,8 @@ peakIn=peakInfo(PTnofill)
 # Flag presence/missingness on batch level
 bF=batchFlag(PTnofill,meta,peakIn)
 # Find possible alignment candidates per sample type
-aIQ=alignIndex(bF,grpType='Q',mzdiff=0.0025,rtdiff = 15,report=T,reportName='../splits_aIQ')
-aIR=alignIndex(bF,grpType='R',mzdiff=0.0025,rtdiff = 15,report=T,reportName='../splits_aIR')
+aIQ=alignIndex(bF,grpType='Q',mzdiff=0.002,rtdiff=15,report=T,reportName='../splits_aIQ')
+aIR=alignIndex(bF,grpType='R',mzdiff=0.002,rtdiff=15,report=T,reportName='../splits_aIR')
 # Plot achieved alignments
 plotAlign(bF,aIQ,plotType='pdf',reportName='../clustPlots_aIQ')
 plotAlign(bF,aIR,plotType='pdf',reportName='../clustPlots_aIR')
