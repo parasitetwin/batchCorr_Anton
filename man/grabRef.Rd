@@ -2,21 +2,25 @@
 % Please edit documentation in R/clustFuncBare3.r
 \name{grabRef}
 \alias{grabRef}
-\title{DC: Grab Reference samples}
+\title{DC: Grab Reference samples from same batch as QC samples}
 \usage{
-grabRef(XS, QC, grp = "Ref")
+grabRef(XS, peakTab, QC, grp = "Ref", inj)
 }
 \arguments{
 \item{XS}{An XCMS object}
 
+\item{peakTab}{peaktable. Defaults to `xcms::peakTab(SX)`. Specify `PTalign` from `batchAlign` object for multibatch aligned data.}
+
 \item{QC}{a grabQC object}
 
 \item{grp}{an identifyer for the reference samples}
+
+\item{inj}{a vector of Ref injection numbers in sequence. Defaults to defined function to suit my naming strategy. Pls change accordingly.}
 }
 \value{
 a list containing:
 
-inj: a vector of reference sample injection numbers in sequence
+inj: a vector of reference sample injection numbers in sequence (same as indata OR generated)
 
 Feats: Features (peak table)
 }

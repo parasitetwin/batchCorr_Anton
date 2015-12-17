@@ -4,21 +4,25 @@
 \alias{grabQC}
 \title{DC: Grab QC samples}
 \usage{
-grabQC(XS, batch, grp = "QC")
+grabQC(XS, peakTab, batch, grp = "QC", inj)
 }
 \arguments{
 \item{XS}{An XCMS object}
 
+\item{peakTab}{peaktable. Defaults to `xcms::peakTab(SX)`. Specify `PTalign` from `batchAlign` object for multibatch aligned data.}
+
 \item{batch}{a batch identifier}
 
 \item{grp}{an identifyer for the QC samples}
+
+\item{inj}{a vector of QC injection numbers in sequence. Defaults to defined function to suit my naming strategy. Pls change accordingly.}
 }
 \value{
 a list containing:
 
 batch: batch (as input)
 
-inj: a vector of QC injection numbers in sequence
+inj: a vector of QC injection numbers in sequence (same as indata OR generated)
 
 Feats: Scaled features (peak table)
 
@@ -30,5 +34,6 @@ NAs: which features are missing from QC samples
 }
 \description{
 Bring out 'QC' group from an XCMS object: Scaled and 100% NAs removed
+#' **Note** that `inj` needs to be either **manually specified OR recoded** to suit your sample naming strategy.
 }
 

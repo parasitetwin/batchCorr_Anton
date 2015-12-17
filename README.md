@@ -22,7 +22,7 @@ The three areas indicated are:
 
 correction | abbreviation | description
 :--- | :----------- | :----------
-Batch alignment | BA | Functions to align features that are originally systematically misaligned across batches
+Batch alignment | BA | Functions to align features that are originally systematically misaligned between batches
 Drift correction | DC | Functions to perform within batch intensity drift correction
 Batch normalisation | BN | Funtions to perform between batch normalisation
 
@@ -54,6 +54,7 @@ Brunius C, Shi L and Landberg R. Within and between batch correction of LC-MS me
 ## Version history
 version | date | comment
 :------ | :--- | :------
+0.1.5 | 15-12-17 | Updated `workflow.R`. Added `grabWrapBA` for grabbing using batch-aligned peaktable. Added batchdata. Updated peaktable data.
 0.1.4 | 15-12-03 | Added `workflow.R` under `inst/`, roxygenised data and updated README.
 0.1.3 | 15-12-03 | Added data and data-raw
 0.1.2 | | `batchFlag()`: externalised peakInfo (updated `peakInfo()` to include starting character) 

@@ -30,3 +30,24 @@
 #'   (i.e. metabolite features) - containing missing values:
 #'   \code{batch}, \code{grp}.
 "meta"
+
+#' BData
+#'
+#' Batch object for within batch correction of 'Batch_B'
+#'
+#' @format A list with QC, Ref and Batch objects
+"BData"
+
+#' FData
+#'
+#' Batch object for within batch correction of 'Batch_F'
+#'
+#' @format A list with QC, Ref and Batch objects
+"FData"
+
+#' HData
+#'
+#' Batch object for within batch correction of 'Batch_H'
+#'
+#' @format A list with QC, Ref and Batch objects
+"HData"

@@ -1,8 +1,8 @@
 Package: batchCorr
 Type: Package
 Title: Within And Between Batch Correction Of LC-MS Metabolomics Data
-Version: 0.1.4
-Date: 2015-11-30
+Version: 0.1.5
+Date: 2015-12-17
 Author: Carl Brunius <carl.brunius@slu.se>
 Maintainer: Carl Brunius <carl.brunius@slu.se>
 Description: (BA) Batch alignment (of systematic misalignment between batches),

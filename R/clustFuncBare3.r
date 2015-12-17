@@ -118,7 +118,7 @@ rmsDist=function(mat) {
 #' @return clustTime: Time required for the clustering
 #' @export
 ## Perform clustering
-clust=function(QCInjs,QCFeats,modelNames=c('VVE'),G=seq(1,100,by=3),report=FALSE) {
+clust=function(QCInjs,QCFeats,modelNames=c('VVE'),G=seq(1,50,by=3),report=FALSE) {
 	# modelNames='VVV'
 	# modelNames=c('VEV','VVV')
 	# modelNames=c('VEE','VEV','VVE','VVV')
@@ -251,7 +251,7 @@ driftCalc=function(QCClust,smoothFunc=c('spline','loess'),spar=0.2,report=FALSE)
 #' @return drift corrected corr/batch samples
 #' @export
 ## Perform drift correction for clusters IF rmsdRef is improved
-driftCorr3=function(QCDriftCalc,refList=NA,refType=c('none','one','many'),CorrObj=NA,report=FALSE) {
+driftCorr=function(QCDriftCalc,refList=NA,refType=c('none','one','many'),CorrObj=NA,report=FALSE) {
 	if (missing(refType)) refType='none'
 	if (refType=='many') {
 		cat('\nMultiple reference samples not yet implemented\n')
@@ -362,7 +362,7 @@ driftCorr3=function(QCDriftCalc,refList=NA,refType=c('none','one','many'),CorrOb
 #' @return QCcvs: CVs per features kept within the final peaktable
 #' @export
 ## Remove individual variables with CV>limit
-cleanVar3=function(QCCorr,CVlimit=.2,report=FALSE) {
+cleanVar=function(QCCorr,CVlimit=.2,report=FALSE) {
 	QCFeats=QCCorr$QCFeats
 	removeFeats=QCCorr$removeFeats
 	if (!is.null(removeFeats)) {
@@ -472,7 +472,7 @@ grabWrapBA=function(XS,PT,batch,QC='QC',Ref='Ref') {
 #' @return A drift corrected object with QC features CV<limit containing final peak table
 #' @export
 ## Wrapper function for all drift subfunctions (clust, driftCalc, driftCorr, cleanVar)
-driftWrap3=function(grabObj,refType,CVlimit=0.3,report=FALSE) {
+driftWrap=function(grabObj,refType,CVlimit=0.3,report=FALSE) {
 	QCObj=grabObj$QC
 	RefObj=grabObj$Ref
 	CorrObj=grabObj$Batch
@@ -488,6 +488,6 @@ driftWrap3=function(grabObj,refType,CVlimit=0.3,report=FALSE) {
 	}
 	A=driftList=clust(QCObj$inj,QCObj$Feats,report=report)
 	B=driftList=driftCalc(driftList,report=report)
-	D=driftList=driftCorr3(driftList,refList=RefObj,refType=refType,CorrObj=CorrObj,report=report)
-	E=driftList=cleanVar3(driftList,CVlimit=CVlimit,report=report)
+	D=driftList=driftCorr(driftList,refList=RefObj,refType=refType,CorrObj=CorrObj,report=report)
+	E=driftList=cleanVar(driftList,CVlimit=CVlimit,report=report)
 }

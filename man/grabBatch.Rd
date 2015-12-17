@@ -4,17 +4,21 @@
 \alias{grabBatch}
 \title{DC: Grab Batch samples}
 \usage{
-grabBatch(XS, QC)
+grabBatch(XS, peakTab, QC, inj)
 }
 \arguments{
 \item{XS}{An XCMS object}
 
+\item{peakTab}{peaktable. Defaults to `xcms::peakTab(SX)`. Specify `PTalign` from `batchAlign` object for multibatch aligned data.}
+
 \item{QC}{a grabQC object}
+
+\item{inj}{a vector of batch injection numbers in sequence. Defaults to defined function to suit my naming strategy. Pls change accordingly.}
 }
 \value{
 a list containing:
 
-inj: a vector of sample injection numbers in sequence
+inj: a vector of sample injection numbers in sequence (same as indata OR generated)
 
 Feats: Features (peak table)
 }
