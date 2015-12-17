@@ -1,45 +1,52 @@
 #' DC: Grab QC samples
 #'
 #' Bring out 'QC' group from an XCMS object: Scaled and 100% NAs removed
+#' #' **Note** that `inj` needs to be either **manually specified OR recoded** to suit your sample naming strategy.
 #' @param XS An XCMS object
+#' @param peakTab peaktable. Defaults to `xcms::peakTab(SX)`. Specify `PTalign` from `batchAlign` object for multibatch aligned data.
 #' @param batch a batch identifier
 #' @param grp an identifyer for the QC samples
+#' @param inj a vector of QC injection numbers in sequence. Defaults to defined function to suit my naming strategy. Pls change accordingly.
 #' @return a list containing:
 #' @return batch: batch (as input)
-#' @return inj: a vector of QC injection numbers in sequence
+#' @return inj: a vector of QC injection numbers in sequence (same as indata OR generated)
 #' @return Feats: Scaled features (peak table)
 #' @return RawFeats: Unscaled features including 100% NA features (peak table)
 #' @return RawFeatsNaRm: Unscaled features excluding 100% NA features (peak table)
 #' @return NAs: which features are missing from QC samples
 #' @export
 ## Bring out 'QC' group: Scaled and NAs removed
-grabQC=function(XS,batch,grp='QC') {
+grabQC=function(XS,peakTab,batch,grp='QC',inj) {
 	incl=(XS@phenoData[,1]==batch & XS@phenoData[,2]==grp)
-	peakTab=peakTab(XS)
+	if (missing(peakTab)) peakTab=peakTab(XS)
 	QC=peakTab[incl,]
 	QCCV=cv(QC)
 	QCscale=scale(QC,center=FALSE)
 	NAs=colSums(is.na(QCscale))>0
 	QCRawNaRm=QC[,!NAs]
 	QCFeats=QCscale[,!NAs]
-	inj=as.numeric(substr(matrix(unlist(strsplit(rownames(QC),'_')),ncol=6,byrow=TRUE)[,6],1,3))
+	if (missing(inj)) inj=as.numeric(substr(matrix(unlist(strsplit(rownames(QC),'_')),ncol=6,byrow=TRUE)[,6],1,3))
 	return(list(batch=batch,inj=inj,Feats=QCFeats,RawFeats=QC,RawFeatsNaRm=QCRawNaRm,NAs=NAs))
 }
 
-#' DC: Grab Reference samples
+#' DC: Grab Reference samples from same batch as QC samples
 #'
 #' Bring out reference sample group from an XCMS object: Exclude features missing from QC samples
 #' @param XS An XCMS object
+#' @param peakTab peaktable. Defaults to `xcms::peakTab(SX)`. Specify `PTalign` from `batchAlign` object for multibatch aligned data.
 #' @param QC a grabQC object
 #' @param grp an identifyer for the reference samples
+#' @param inj a vector of Ref injection numbers in sequence. Defaults to defined function to suit my naming strategy. Pls change accordingly.
 #' @return a list containing:
-#' @return inj: a vector of reference sample injection numbers in sequence
+#' @return inj: a vector of reference sample injection numbers in sequence (same as indata OR generated)
 #' @return Feats: Features (peak table)
 #' @export
 ## Bring out Reference samples from same batch as QCs
-grabRef=function(XS,QC,grp='Ref') {
-	Feats=peakTab(XS)[XS@phenoData[,1]==QC$batch & XS@phenoData[,2]==grp,!QC$NAs]
-	inj=as.numeric(substr(matrix(unlist(strsplit(rownames(Feats),'_')),ncol=6,byrow=TRUE)[,6],1,3))
+grabRef=function(XS,peakTab,QC,grp='Ref',inj) {
+  incl=(XS@phenoData[,1]==QC$batch & XS@phenoData[,2]==grp)
+  if (missing(peakTab)) peakTab=peakTab(XS)
+  Feats=peakTab[incl,!QC$NAs]
+	if (missing(inj)) inj=as.numeric(substr(matrix(unlist(strsplit(rownames(Feats),'_')),ncol=6,byrow=TRUE)[,6],1,3))
 	return(list(inj=inj,Feats=Feats))
 }
 
@@ -47,15 +54,19 @@ grabRef=function(XS,QC,grp='Ref') {
 #'
 #' Bring out all batch samples from an XCMS object: Exclude features missing from QC samples
 #' @param XS An XCMS object
+#' @param peakTab peaktable. Defaults to `xcms::peakTab(SX)`. Specify `PTalign` from `batchAlign` object for multibatch aligned data.
 #' @param QC a grabQC object
+#' @param inj a vector of batch injection numbers in sequence. Defaults to defined function to suit my naming strategy. Pls change accordingly.
 #' @return a list containing:
-#' @return inj: a vector of sample injection numbers in sequence
+#' @return inj: a vector of sample injection numbers in sequence (same as indata OR generated)
 #' @return Feats: Features (peak table)
 #' @export
 ## Bring out entire batch same as QCs
-grabBatch=function(XS,QC) {
-	Feats=peakTab(XS)[XS@phenoData[,1]==QC$batch,!QC$NAs]
-	inj=as.numeric(substr(matrix(unlist(strsplit(rownames(Feats),'_')),ncol=6,byrow=TRUE)[,6],1,3))
+grabBatch=function(XS,peakTab,QC,inj) {
+  incl=(XS@phenoData[,1]==QC$batch)
+  if (missing(peakTab)) peakTab=peakTab(XS)
+  Feats=peakTab[incl,!QC$NAs]
+	if (missing(inj)) inj=as.numeric(substr(matrix(unlist(strsplit(rownames(Feats),'_')),ncol=6,byrow=TRUE)[,6],1,3))
 	return(list(inj=inj,Feats=Feats))
 }
 
@@ -428,6 +439,27 @@ grabWrap=function(XS,batch,QC='QC',Ref='Ref') {
 	RefObj=grabRef(XS,QCObj,grp=Ref)
 	BatchObj=grabBatch(XS,QCObj)
 	return(list(QC=QCObj,Ref=RefObj,Batch=BatchObj))
+}
+
+#' DC: Grab samples for drift correction after batch alignment
+#'
+#' Wrapper function for grabbing QCs, reference and entire batch samples combining information from XCMS object and batch-aligned peaktable.
+#' @param XS an XCMS object
+#' @param PT a master peaktable after batch alignment
+#' @param batch a batch identifier
+#' @param QC a QC sample identifier
+#' @param Ref a reference sample identifier
+#' @return An object containing:
+#' @return QC: A QC object
+#' @return Ref: A Ref object
+#' @return Batch: A batch object
+#' @export
+## Wrapper function for grabbing QCs, reference and entire batch samples from XCMS-set
+grabWrapBA=function(XS,PT,batch,QC='QC',Ref='Ref') {
+  QCObj=grabQC(XS,PT,batch=batch,grp=QC)
+  RefObj=grabRef(XS,PT,QCObj,grp=Ref)
+  BatchObj=grabBatch(XS,PT,QCObj)
+  return(list(QC=QCObj,Ref=RefObj,Batch=BatchObj))
 }
 
 #' DC: Perform drift correction

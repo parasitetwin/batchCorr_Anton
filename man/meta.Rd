@@ -12,7 +12,10 @@ meta
 }
 \description{
 Metadata for the injections in PTfill and PTnofill
+}
+\details{
 Col 1: Batch identifier
+
 Col 2: Sample type identifier (Q for QC and R for Ref)
 }
 \keyword{datasets}

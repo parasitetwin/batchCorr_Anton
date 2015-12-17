@@ -6,7 +6,7 @@ filepath="C:/R/QCData/OrgData"  # Specify directory of centroid files
 QC1=xcmsSet(filepath,method='centWave',prefilter=c(3,440),peakwidth=c(5,76),snthresh=6,mzdiff=0.0045,ppm=15)
 QC2=group(QC1,bw=10,minfrac=0.75,minsamp=1,mzwid=0.015,sleep=0)
 QC3=retcor(QC2, family="s", span=0.2)
-QC_nofill=group(QC3,bw=1.5,mzwid=0.015,minfrac=.75)
+QC_nofill=group(QC3,bw=1,mzwid=0.015,minfrac=.75)
 QC_fill=fillPeaks(QC_nofill,method='chrom')
 
 ## Organise into peaktable with missing data
