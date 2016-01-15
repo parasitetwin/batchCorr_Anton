@@ -76,8 +76,6 @@ H=driftWrap(HData,report=TRUE)
 
 #####     ---------::::::::::::: Run to here
 
-## To do: devtools::use_data(BData,FData,HData)
-## save(BData,FData,HData,file='batchdata.Rdata')
 ## save(B,F,H,file='batchDrift.Rdata')
 
 
