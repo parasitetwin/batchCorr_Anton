@@ -14,6 +14,54 @@ peakInfo=function(PT,start=3) {
   return(peakInfo)
 }
 
+#' Limit variables/features to those common between batches
+#'
+#' Extract features from peak table and report their m/z and rt values
+#' @param batchFeats list with feature names per batch
+#' @param batchLimit lower limit of number of batches in which the feature needs to be present to be included in the final list (defaults to length of `batchFeats` list)
+#' @return a vector with the features present in at least `batchLimit` batches
+#' @export
+featComb=function(batchFeats,batchLimit) {
+  nBatch=length(batchFeats)
+  if (missing(batchLimit)) batchLimit=nBatch
+  vars=batchFeats[[1]]
+  for (b in 2:nBatch) {
+    vars=c(vars,batchFeats[[b]])
+  }
+  varTab=table(vars) #Tabularize number of occurrences of features
+  finalVars=t(as.data.frame(varTab[varTab>=batchLimit])) # Bring out the features present >= batchLimit times NB! Not correctly sorted!
+  featInfo=peakInfo(finalVars) # Bring out mz and rt to sort them properly
+  finalVars=colnames(finalVars)  # take names of features only
+  finalVars=finalVars[order(featInfo[,1],featInfo[,2])]  # Sort them according to mz and rt
+  return(finalVars)
+}
+
+
+#' Extract features from multiple batch data
+#'
+#' Extract features present in all batches and combine them into a master peaktable.
+#' @param batchObjs a list with batch objects (from within batch drift correction)
+#' @param batchLimit lower limit of number of batches in which the feature needs to be present to be included in the final list (defaults to length of `batchFeats` list)
+#' @param finalVars a vector with the features to bring out from batch PTs. NB! All features need be present in all batches (defaults to all features present in all batches)
+#' @return a combined, but NOT normalised, peaktable - limited to common features
+#' @export
+batchComb=function(batchObjs,batchLimit,finalFeats) {
+  nBatch=length(batchObjs)
+  if (missing(batchLimit)) batchLimit=nBatch
+  if (missing(finalFeats)) {
+    batchFeats=list()
+    for (b in 1:nBatch) {
+      batchFeats[[b]]=batchObjs[[b]]$finalVars
+    }
+    finalFeats=featComb(batchFeats,batchLimit)
+  }
+  PTComb=subset(batchObjs[[1]]$TestFeatsFinal,select=finalFeats)
+  for (b in 2:nBatch) {
+    PTComb=rbind(PTComb,subset(batchObjs[[b]]$TestFeatsFinal,select=finalFeats))
+  }
+  return(PTComb)
+}
+
 #' BN: Info on reference samples aggregated on batch level
 #'
 #' Reference samples are aggregated on batch level

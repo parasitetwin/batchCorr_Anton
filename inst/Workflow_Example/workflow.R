@@ -69,49 +69,47 @@ PT=bA$PTalign
     FData=grabWrapBA(QC_fill,PT,batch='Batch_F',QC='QF')
     HData=grabWrapBA(QC_fill,PT,batch='Batch_H',QC='QH')
 # Perform drift correction within batch
-B=driftWrap(BData,report=TRUE)
-F=driftWrap(FData,report=TRUE)
-H=driftWrap(HData,report=TRUE)
+B=driftWrap(BData,refType='one',report=TRUE)
+F=driftWrap(FData,refType='one',report=TRUE)
+H=driftWrap(HData,refType='one',report=TRUE)
 
+library(VennDiagram)
+venn.diagram(list(B=B$finalVars,F=F$finalVars,H=H$finalVars),file='VennBatch.png')
 
-#####     ---------::::::::::::: Run to here
+png(file='histVars.png',width=1024,height=1024,pointsize = 24)
+par(mar=c(4,4,0,0)+0.2)
+hist(cv(B$QCFeats),200,col=rgb(0.1,0.1,0.1,0.5),xlim=c(0,1),main='',xlab='CV (feature)')
+hist(cv(B$QCFeatsFinal),20,col=rgb(0.9,0.9,0.9,.6),add=TRUE)
+box(bty='l')
+legend('topright',legend=c('Before correction','After correction'),fill=c(rgb(0.1,0.1,0.1,0.5),rgb(0.9,0.9,0.9,.6)))
+dev.off()
 
 ## save(B,F,H,file='batchDrift.Rdata')
-
 
 
 ##########################################################
 ## Combine batch data and restrict to common features only
 
+batchObjs=list(B,F,H)
+PTComb=batchComb(batchObjs)  # Combine features present in all batches
+
+#####     ---------::::::::::::: Run to here
+
 
 ################################################
 ## Perform between batch intensity normalisation
-# Extract aligned peak table
-PT=bAQR$PTalign
-peakInfo=peakInfo(PT)
-# Aggregate ref sample info on batch level
-refs=refOut(PT,meta)
-# Total number of batch features
-allBFeats=prod(dim(RC$refCorr))
-# Check different fold change limit-settings
-fcs=seq(1.2,10,by=0.2)
-propCorr=numeric(length(fcs))
-c=0
-for (fc in fcs) {
-  c=c+1
-  cat(c)
-  RC=refCorr(PT,meta,refs,FCLimit=fc)
-  # Find proportion of batch features normalized by reference samples under FClimit constraint.
-  propCorr[c]=sum(RC$refCorr)/allBFeats
-}
-# Plot supplementary figure for FC limit determination
-plot(fcs,propCorr,xlab='Fold change limit', ylab='Proportion normalized by reference samples')
-lines(fcs,propCorr)
-# Perform ref normalization using FClimit=5
-RC=refCorr(PT,meta,refs,FCLimit=fc)
-# Extract reference normalised peak table
-PT_RefNorm=RC$PTRef
+## By long-term reference samples
+
+refs=refOut(PTComb,meta) # Aggregate ref sample info on batch level
+RC=refCorr(PTComb,meta,refs)  # Perform between batch normalisation for those features passing Ref heuristic criterion
+PT_RefNorm=RC$PTRef  # Extract reference normalised peak table
 
 # NB: Final normalization is not complete!!!
 # Batches where Ref heuristic criterion is not passed still need to be population normalized...
-# Info on which batches need to be population normalized is found in RC$refCorr
+# Info on which batches need to be population normalized is found in RC$refCorr:
+# TRUE denotes normalisation by reference samples
+# FALSE denotes NOT normalised -> Need to be population normalised instead.
+#
+# This is not performed for this data set, since sample populations are not present,
+# but only batch-specific QC and long-term reference samples.
+
