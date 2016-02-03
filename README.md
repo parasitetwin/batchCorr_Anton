@@ -52,8 +52,8 @@ The development and inner workings of these algorithms are reported in:
 *Brunius C, Shi L and Landberg R. Within and between batch correction of LC-MS metabolomics data. Submitted manuscript.*
 
 ## Version history
-version | date      | comment
-:------ | :-------: | :------
+version | date  | comment
+:-----: | :---: | :------
 0.1.6 | 16-02-03 | Added `batchComb` function to extract features present in multiple batches. Updated `workflow.R` <- Removed old data-raw (included in `workflow.R`).
 0.1.5 | 15-12-17 | Updated `workflow.R`. Added `grabWrapBA` for grabbing using batch-aligned peaktable. Added batchdata. Updated peaktable data.
 0.1.4 | 15-12-03 | Added `workflow.R` under `inst/`, roxygenised data and updated README.
