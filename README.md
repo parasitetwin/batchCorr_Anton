@@ -8,10 +8,10 @@ Install `batchCorr` package by:
 
 `devtools::install_github("CarlBrunius/batchCorr")`
 
-In addition to functions relevant for within/between batch correction, data is provided to accurately reproduce figures from the original *Brunius et al paper* (see below).
+In addition to functions relevant for within/between batch correction, data is provided to accurately reproduce figures from the original *Brunius et al* paper (see below).
 
 ## Workflow
-After installation, a `Workflow_Example` folder is created in the `batchCorr` library (in your R library folder). Within this folder, there is a `workflow.R` script containing code on how the package was used to perform within/between batch correction and reproduce figures from the original *Brunius et al paper* (see below).
+After installation, a `Workflow_Example` folder is created in the `batchCorr` library (in your R library folder). Within this folder, there is a `workflow.R` script containing code on how the package was used to perform within/between batch correction and reproduce figures from the original *Brunius et al* paper (see below).
 
 ## Description
 This is a repository containing functions within three areas of batch correction. These algorithms were originally developed 
@@ -49,11 +49,11 @@ Batch normalisation is achieved based on:
 ## Reference
 The development and inner workings of these algorithms are reported in:
 
-Brunius C, Shi L and Landberg R. Within and between batch correction of LC-MS metabolomics data. Submitted manuscript.
+*Brunius C, Shi L and Landberg R. Within and between batch correction of LC-MS metabolomics data. Submitted manuscript.*
 
 ## Version history
-version | date     | comment
-:------ | :------- | :------
+version | date      | comment
+:------ | :-------: | :------
 0.1.6 | 16-02-03 | Added `batchComb` function to extract features present in multiple batches. Updated `workflow.R` <- Removed old data-raw (included in `workflow.R`).
 0.1.5 | 15-12-17 | Updated `workflow.R`. Added `grabWrapBA` for grabbing using batch-aligned peaktable. Added batchdata. Updated peaktable data.
 0.1.4 | 15-12-03 | Added `workflow.R` under `inst/`, roxygenised data and updated README.
