@@ -6,7 +6,9 @@ Install `devtools` to be able to install packages from GitHub.
 
 Install `batchCorr` package by:
 
-`devtools::install_github("CarlBrunius/batchCorr")`
+`devtools::install_git("https://username:password@gitlab.com/CarlBrunius/batchCorr.git")`
+
+where `username` and `password` are you actual username and password for your GitLab account.
 
 In addition to functions relevant for within/between batch correction, data is provided to accurately reproduce figures from the original *Brunius et al* paper (see below).
 
