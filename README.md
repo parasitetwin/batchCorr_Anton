@@ -54,7 +54,7 @@ The development and inner workings of these algorithms are reported in:
 ## Version history
 version | date  | comment
 :-----: | :---: | :------
-0.1.6 | 16-02-03 | Added `batchComb` function to extract features present in multiple batches. Updated `workflow.R` <- Removed old data-raw (included in `workflow.R`).
+0.1.6 | 16-02-03 | Added `batchComb` function to extract features present in multiple batches. Updated `workflow.R` <- Removed old data-raw (included in `workflow.R`). Moved from GitHub to GitLab
 0.1.5 | 15-12-17 | Updated `workflow.R`. Added `grabWrapBA` for grabbing using batch-aligned peaktable. Added batchdata. Updated peaktable data.
 0.1.4 | 15-12-03 | Added `workflow.R` under `inst/`, roxygenised data and updated README.
 0.1.3 | 15-12-03 | Added data and data-raw
