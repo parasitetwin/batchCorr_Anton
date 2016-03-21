@@ -125,6 +125,7 @@ clust=function(QCInjs,QCFeats,modelNames=c('VVE'),G=seq(1,50,by=3),report=FALSE)
 	# modelNames=c('VEE','VVE')
 	# modelNames=c('VII','VEI','VVI','VEE','VEV','VVE','VVV')
 	# modelNames=c('EEE','EEV','EVE','EVV','VEE','VEV','VVE','VVV')
+  library(mclust)
 	startTime=proc.time()[3]
 	mclBIC=mclustBIC(t(QCFeats),G=G,modelNames=modelNames)
 	endTime=proc.time()[3]
@@ -158,6 +159,7 @@ clust=function(QCInjs,QCFeats,modelNames=c('VVE'),G=seq(1,50,by=3),report=FALSE)
 #' @export
 ## Calculate drift clusters
 driftCalc=function(QCClust,smoothFunc=c('spline','loess'),spar=0.2,report=FALSE) {
+  library(reshape)
 	if (missing(smoothFunc)) smoothFunc='spline'
 	MC=QCClust$clust
 	QCInjs=QCClust$QCInjs
@@ -183,8 +185,9 @@ driftCalc=function(QCClust,smoothFunc=c('spline','loess'),spar=0.2,report=FALSE)
 	rmsdRaw=rmsDist(QCFeats)
 		for (n in 1:nclass) {
 			QCFeatsCorr=QCFeats # Allocate matrix (for drift corrected variables) for later QC distance calculation
-			vars=QCFeats[,classes==n] # Take out cluster variables
-			varClust[[n]]=colnames(vars)
+			whichVars=which(classes==n)
+			vars=QCFeats[,whichVars] # Take out cluster variables
+			varClust[[n]]=colnames(QCFeats)[whichVars]
 			V=as.data.frame(cbind(QCInjs,vars)) # Arrange and rearrange data
 			V=melt(V,id.vars='QCInjs')
 			V=V[order(V$QCInjs),]
