@@ -40,7 +40,9 @@ library(reshape)
     # save(PTnofill,file='PT_nofill.RData')
     # save(meta,file='meta.RData')
 
-
+# LOAD DATA
+library(batchCorr)
+data(PTfill,PTnofill,BData,FData,HData)
 ##########################
 ## Perform batch alignment
 # Extract peakinfo (i.e. m/z and rt of features)
