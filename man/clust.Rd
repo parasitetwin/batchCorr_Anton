@@ -4,7 +4,7 @@
 \alias{clust}
 \title{DC: Cluster features}
 \usage{
-clust(QCInjs, QCFeats, modelNames = c("VVE"), G = seq(1, 50, by = 3),
+clust(QCInjs, QCFeats, modelNames = c("VVE"), G = seq(1, 52, by = 3),
   report = FALSE)
 }
 \arguments{

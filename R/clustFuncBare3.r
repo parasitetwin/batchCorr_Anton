@@ -118,7 +118,7 @@ rmsDist=function(mat) {
 #' @return clustTime: Time required for the clustering
 #' @export
 ## Perform clustering
-clust=function(QCInjs,QCFeats,modelNames=c('VVE'),G=seq(1,50,by=3),report=FALSE) {
+clust=function(QCInjs,QCFeats,modelNames=c('VVE'),G=seq(1,52,by=3),report=FALSE) {
 	# modelNames='VVV'
 	# modelNames=c('VEV','VVV')
 	# modelNames=c('VEE','VEV','VVE','VVV')

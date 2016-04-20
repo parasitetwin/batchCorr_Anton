@@ -1,40 +1,33 @@
-##############################
-## Call in requested libraries
-library(xcms)
-library(mclust)
-library(reshape)
-
-
 ###################
 ## Read in raw data
 #   The indented section was already performed to generate data available in package
-    filepath="C:/R/QCData/OrgData"  # Specify directory of centroid files
+    # filepath="C:/R/QCData/OrgData"  # Specify directory of centroid files
     ## Read samples
-    QC1=xcmsSet(filepath,method='centWave',prefilter=c(3,440),peakwidth=c(5,76),snthresh=6,mzdiff=0.0045,ppm=15)
-    QC2=group(QC1,bw=10,minfrac=0.75,minsamp=1,mzwid=0.015,sleep=0)
-    QC3=retcor(QC2, family="s", span=0.2)
-    QC_nofill=group(QC3,bw=1,mzwid=0.015,minfrac=.75)
-    QC_fill=fillPeaks(QC_nofill,method='chrom')
+    # QC1=xcmsSet(filepath,method='centWave',prefilter=c(3,440),peakwidth=c(5,76),snthresh=6,mzdiff=0.0045,ppm=15)
+    # QC2=group(QC1,bw=10,minfrac=0.75,minsamp=1,mzwid=0.015,sleep=0)
+    # QC3=retcor(QC2, family="s", span=0.2)
+    # QC_nofill=group(QC3,bw=1,mzwid=0.015,minfrac=.75)
+    # QC_fill=fillPeaks(QC_nofill,method='chrom')
     ## Organise into peaktable with missing data
-    QCB=grabAlign(QC_nofill,batch='Batch_B',grp='QB')
-    RefB=grabAlign(QC_nofill,batch='Batch_B',grp='Ref')
-    QCF=grabAlign(QC_nofill,batch='Batch_F',grp='QF')
-    RefF=grabAlign(QC_nofill,batch='Batch_F',grp='Ref')
-    QCH=grabAlign(QC_nofill,batch='Batch_H',grp='QH')
-    RefH=grabAlign(QC_nofill,batch='Batch_H',grp='Ref')
-    PTnofill=rbind(QCB,RefB,QCF,RefF,QCH,RefH)
+    # QCB=grabAlign(QC_nofill,batch='Batch_B',grp='QB')
+    # RefB=grabAlign(QC_nofill,batch='Batch_B',grp='Ref')
+    # QCF=grabAlign(QC_nofill,batch='Batch_F',grp='QF')
+    # RefF=grabAlign(QC_nofill,batch='Batch_F',grp='Ref')
+    # QCH=grabAlign(QC_nofill,batch='Batch_H',grp='QH')
+    # RefH=grabAlign(QC_nofill,batch='Batch_H',grp='Ref')
+    # PTnofill=rbind(QCB,RefB,QCF,RefF,QCH,RefH)
     ## Organise into peaktable without missing data
-    QCB=grabAlign(QC_fill,batch='Batch_B',grp='QB')
-    RefB=grabAlign(QC_fill,batch='Batch_B',grp='Ref')
-    QCF=grabAlign(QC_fill,batch='Batch_F',grp='QF')
-    RefF=grabAlign(QC_fill,batch='Batch_F',grp='Ref')
-    QCH=grabAlign(QC_fill,batch='Batch_H',grp='QH')
-    RefH=grabAlign(QC_fill,batch='Batch_H',grp='Ref')
-    PTfill=rbind(QCB,RefB,QCF,RefF,QCH,RefH)
+    # QCB=grabAlign(QC_fill,batch='Batch_B',grp='QB')
+    # RefB=grabAlign(QC_fill,batch='Batch_B',grp='Ref')
+    # QCF=grabAlign(QC_fill,batch='Batch_F',grp='QF')
+    # RefF=grabAlign(QC_fill,batch='Batch_F',grp='Ref')
+    # QCH=grabAlign(QC_fill,batch='Batch_H',grp='QH')
+    # RefH=grabAlign(QC_fill,batch='Batch_H',grp='Ref')
+    # PTfill=rbind(QCB,RefB,QCF,RefF,QCH,RefH)
     ## Set up metadata (Quick'n'Dirty approach)
-    batch=c(rep('B',nrow(QCB)+nrow(RefB)),rep('F',nrow(QCF)+nrow(RefF)),rep('H',nrow(QCH)+nrow(RefH)))
-    grp=c(rep('Q',nrow(QCB)),rep('R',nrow(RefB)),rep('Q',nrow(QCF)),rep('R',nrow(RefF)),rep('Q',nrow(QCH)),rep('R',nrow(RefH)))
-    meta=cbind(batch,grp)
+    # batch=c(rep('B',nrow(QCB)+nrow(RefB)),rep('F',nrow(QCF)+nrow(RefF)),rep('H',nrow(QCH)+nrow(RefH)))
+    # grp=c(rep('Q',nrow(QCB)),rep('R',nrow(RefB)),rep('Q',nrow(QCF)),rep('R',nrow(RefF)),rep('Q',nrow(QCH)),rep('R',nrow(RefH)))
+    # meta=cbind(batch,grp)
     ## Save relevant data files
     # save(PTfill,file='PT_fill.RData')
     # save(PTnofill,file='PT_nofill.RData')
@@ -67,9 +60,9 @@ PT=bA$PTalign
 ## Perform within batch drift corrections
 #   The indented section was already performed to generate data available in package
     # Extract data per batch
-    BData=grabWrapBA(QC_fill,PT,batch='Batch_B',QC='QB')
-    FData=grabWrapBA(QC_fill,PT,batch='Batch_F',QC='QF')
-    HData=grabWrapBA(QC_fill,PT,batch='Batch_H',QC='QH')
+    # BData=grabWrapBA(QC_fill,PT,batch='Batch_B',QC='QB')
+    # FData=grabWrapBA(QC_fill,PT,batch='Batch_F',QC='QF')
+    # HData=grabWrapBA(QC_fill,PT,batch='Batch_H',QC='QH')
 # Perform drift correction within batch
 B=driftWrap(BData,refType='one',report=TRUE)
 F=driftWrap(FData,refType='one',report=TRUE)
