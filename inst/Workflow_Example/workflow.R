@@ -74,13 +74,32 @@ venn.diagram(list(B=B$finalVars,F=F$finalVars,H=H$finalVars),file='VennBatch.png
 png(file='histVars.png',width=1024,height=1024,pointsize = 24)
 par(mar=c(4,4,0,0)+0.2)
 hist(cv(B$QCFeats),200,col=rgb(0.1,0.1,0.1,0.5),xlim=c(0,1),main='',xlab='CV (feature)')
-hist(cv(B$QCFeatsFinal),20,col=rgb(0.9,0.9,0.9,.6),add=TRUE)
+hist(cv(B$QCFeatsCorr),200,col=rgb(0.9,0.9,0.9,.6),add=TRUE)
+# hist(cv(B$QCFeatsFinal),20,col=rgb(0.3,0.3,0.3,.3),add=TRUE)
+lines(rep(0.3,2),c(0,800),lty=2)
+text(0.3,800,'CV limit 30%',pos=4)
 box(bty='l')
 legend('topright',legend=c('Before correction','After correction'),fill=c(rgb(0.1,0.1,0.1,0.5),rgb(0.9,0.9,0.9,.6)))
 dev.off()
 
 ## save(B,F,H,file='batchDrift.Rdata')
+sum(cv(B$QCFeats)<0.3)
+sum(cv(B$QCFeatsCorr)<0.3)
+mean(cv(B$QCFeats))
+mean(cv(B$QCFeatsCorr))
+mean(cv(B$QCFeatsFinal))
 
+sum(cv(F$QCFeats)<0.3)
+sum(cv(F$QCFeatsCorr)<0.3)
+mean(cv(F$QCFeats))
+mean(cv(F$QCFeatsCorr))
+mean(cv(F$QCFeatsFinal))
+
+sum(cv(H$QCFeats)<0.3)
+sum(cv(H$QCFeatsCorr)<0.3)
+mean(cv(H$QCFeats))
+mean(cv(H$QCFeatsCorr))
+mean(cv(H$QCFeatsFinal))
 
 ##########################################################
 ## Combine batch data and restrict to common features only
