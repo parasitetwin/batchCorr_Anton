@@ -43,18 +43,16 @@ peakIn=peakInfo(PTnofill)
 # Flag presence/missingness on batch level
 bF=batchFlag(PTnofill,meta,peakIn)
 # Find possible alignment candidates per sample type
-aIQ=alignIndex(bF,grpType='Q',mzdiff=0.002,rtdiff=15,report=T,reportName='../splits_aIQ')
-aIR=alignIndex(bF,grpType='R',mzdiff=0.002,rtdiff=15,report=T,reportName='../splits_aIR')
+aIQ=alignIndex(bF,grpType='Q',mzdiff=0.002,rtdiff=15,report=T,reportName='splits_aIQ')
+aIR=alignIndex(bF,grpType='R',mzdiff=0.002,rtdiff=15,report=T,reportName='splits_aIR')
 # Plot achieved alignments
-plotAlign(bF,aIQ,plotType='pdf',reportName='../clustPlots_aIQ')
-plotAlign(bF,aIR,plotType='pdf',reportName='../clustPlots_aIR')
-# Aggregate alignments across sample types
-aQR=aggregateIndex(aIQ,aIR)
+plotAlign(bF,aIQ,plotType='pdf',reportName='clustPlots_aIQ')
+plotAlign(bF,aIR,plotType='pdf',reportName='clustPlots_aIR')
 # Perform alignment -> Peaktable
-bA=batchAlign(bF,aQR,PTfill,meta)
+bA=batchAlign(bF,aIQ,PTfill,meta)
 # Extract new peak table
 PT=bA$PTalign
-
+dim(PT)
 
 #########################################
 ## Perform within batch drift corrections
