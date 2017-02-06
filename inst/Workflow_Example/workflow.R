@@ -35,7 +35,7 @@
 
 # LOAD DATA
 library(batchCorr)
-data(PTfill,PTnofill,BData,FData,HData)
+data(PTfill,PTnofill,meta,BData,FData,HData)
 ##########################
 ## Perform batch alignment
 # Extract peakinfo (i.e. m/z and rt of features)
@@ -44,15 +44,23 @@ peakIn=peakInfo(PTnofill)
 bF=batchFlag(PTnofill,meta,peakIn)
 # Find possible alignment candidates per sample type
 aIQ=alignIndex(bF,grpType='Q',mzdiff=0.002,rtdiff=15,report=T,reportName='splits_aIQ')
-aIR=alignIndex(bF,grpType='R',mzdiff=0.002,rtdiff=15,report=T,reportName='splits_aIR')
 # Plot achieved alignments
 plotAlign(bF,aIQ,plotType='pdf',reportName='clustPlots_aIQ')
-plotAlign(bF,aIR,plotType='pdf',reportName='clustPlots_aIR')
 # Perform alignment -> Peaktable
 bA=batchAlign(bF,aIQ,PTfill,meta)
 # Extract new peak table
 PT=bA$PTalign
+
 dim(PT)
+# [1]    90 11284
+
+
+
+
+
+
+
+
 
 #########################################
 ## Perform within batch drift corrections

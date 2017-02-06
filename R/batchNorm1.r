@@ -132,6 +132,7 @@ refCorr=function (PT, meta, refs, FCLimit = 5){
       }
     }
     featFlags = abs(log(featIntRat/meanIntRat)) <= log(FCLimit)
+    featFlags[which(is.na(featFlags),arr.ind=T)]=FALSE
     for (b in 1:nBatch) {
       if (cvm[b, feat] == FALSE | is.na(cvm[b, feat])) {
         featFlags[, b] = featFlags[b, ] = FALSE
