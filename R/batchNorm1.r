@@ -62,7 +62,7 @@ batchComb=function(batchObjs,batchLimit,finalFeats) {
   return(PTComb)
 }
 
-#' BN: Info on reference samples aggregated on batch level
+#' BN: Info on reference samples aggregated on batch level (Deprecated)
 #'
 #' Reference samples are aggregated on batch level
 #' @param PT a multi-batch master peak table

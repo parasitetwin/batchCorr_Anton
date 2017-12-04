@@ -54,6 +54,7 @@ The development and inner workings of these algorithms are reported in:
 ## Version history
 version | date  | comment
 :-----: | :---: | :------
+0.1.9 | 17-12-04 | Added makeObject functions and merged refOut with refCorr
 0.1.8 | 17-02-06 | Bugfix `refCorr`: Fixed neg ratios -> FALSE.
 0.1.7 | 16-04-12 | Added `data` statement to `workflow.R` and added population normalization to `refCorr`.
 0.1.6 | 16-02-03 | Added `batchComb` function to extract features present in multiple batches. Updated `workflow.R` <- Removed old data-raw (included in `workflow.R`). Moved from GitHub to GitLab

@@ -2,7 +2,7 @@
 % Please edit documentation in R/batchNorm1.r
 \name{refOut}
 \alias{refOut}
-\title{BN: Info on reference samples aggregated on batch level}
+\title{BN: Info on reference samples aggregated on batch level (Deprecated)}
 \usage{
 refOut(PT, meta, grpType = "R", CVlimit = 0.3)
 }
