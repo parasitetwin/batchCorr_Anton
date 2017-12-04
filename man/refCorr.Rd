@@ -4,14 +4,18 @@
 \alias{refCorr}
 \title{BN: Between batch normalisation by Ref samples}
 \usage{
-refCorr(PT, meta, refs, FCLimit = 5)
+refCorr(PT, batch, grp, grpType = "R", CVlimit = 0.3, FCLimit = 5)
 }
 \arguments{
 \item{PT}{a multi-batch master peak table}
 
-\item{meta}{metadata with batch (col1) and sample type (col2)}
+\item{batch}{Batch identifier}
 
-\item{refs}{a refOut object}
+\item{grp}{Sample type identifier (e.g. 'Sample', 'QC', 'Ref' or similar)}
+
+\item{grpType}{Reference sample identifier (e.g. 'Ref')}
+
+\item{CVlimit}{CV criterion to pass for Ref samples per batch}
 
 \item{FCLimit}{Fold-change criterion for intensity (in relation to average intensity FC between batches)}
 }
@@ -22,9 +26,18 @@ PTRef: Reference sample-normalised multi-batch peak table
 
 refCorr: Boolean matrix with info on which batches were normalised by reference samples
 
+CV: boolean per batch & feature in CV<limit
+
+aveInt: average reference intensity per batch & feature
+
 PTOrg (indata peaktable)
+
+batch Batch identifier
+
+grp Sample type identifier
+
+grpType Reference sample identifier
 }
 \description{
 Batches are normalised by Ref samples if passing heuristic distance criterion.
 }
-

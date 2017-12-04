@@ -19,4 +19,3 @@ a combined, but NOT normalised, peaktable - limited to common features
 \description{
 Extract features present in all batches and combine them into a master peaktable.
 }
-

@@ -19,4 +19,3 @@ A vector with subcluster identifiers
 \description{
 clustSplit will split clusters by iteratively removing maximum distances until "single possible candidates" are identified. The function works recursively of severely overcrowded clusters. Used internally.
 }
-

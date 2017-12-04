@@ -31,4 +31,3 @@ QCcvs: CVs per features kept within the final peaktable
 \description{
 Remove those features with CV(QC)>limit (defined by user)
 }
-

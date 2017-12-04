@@ -25,4 +25,3 @@ Feats: Features (peak table)
 \description{
 Bring out all batch samples from an XCMS object: Exclude features missing from QC samples
 }
-

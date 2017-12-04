@@ -12,4 +12,3 @@ HData
 Batch object for within batch correction of 'Batch_H'
 }
 \keyword{datasets}
-

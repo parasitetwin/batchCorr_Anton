@@ -15,4 +15,3 @@ a peak table with samples as rows and features as columns, features (colnames) n
 \description{
 peakTab will extract a peak table from an XCMS object with samples as rows and features as columns. Features are named by 'm/z@rt'
 }
-

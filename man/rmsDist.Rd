@@ -15,4 +15,3 @@ a numeric rmsDist
 \description{
 Calculate root mean squared distance from center point
 }
-

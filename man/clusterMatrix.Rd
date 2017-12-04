@@ -15,4 +15,3 @@ clusters: groups of features linked through mutual events
 \description{
 clusterMatrix will sort features into clusters. Used internally.
 }
-

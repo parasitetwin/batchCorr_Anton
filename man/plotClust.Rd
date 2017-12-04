@@ -25,4 +25,3 @@ plotClust(batchflag, grpFlag, cluster, text, color = 2, mzwidth = 0.02,
 \description{
 plotClust will plot clusters identified based on sample type. Used internally.
 }
-

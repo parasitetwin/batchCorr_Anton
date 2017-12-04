@@ -19,4 +19,3 @@ a peak table with samples as rows and features as columns, features (colnames) n
 \description{
 grabAlign will bring out sampletype:'grp' from batch:'batch' of an XCMS object
 }
-

@@ -12,4 +12,3 @@ FData
 Batch object for within batch correction of 'Batch_F'
 }
 \keyword{datasets}
-

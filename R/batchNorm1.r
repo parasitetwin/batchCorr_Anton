@@ -74,6 +74,7 @@ batchComb=function(batchObjs,batchLimit,finalFeats) {
 #' @return aveInt: average reference intensity per batch & feature
 #' @export
 refOut=function(PT,meta,grpType='R',CVlimit=0.3) {
+  warning('Still works but deprecated: Functionality merged with refCorr')
   batch=meta[,1]
   grp=meta[,2]
   uniqBatch=unique(batch)
@@ -93,70 +94,89 @@ refOut=function(PT,meta,grpType='R',CVlimit=0.3) {
 #' BN: Between batch normalisation by Ref samples
 #'
 #' Batches are normalised by Ref samples if passing heuristic distance criterion.
+#'
 #' @param PT a multi-batch master peak table
-#' @param meta metadata with batch (col1) and sample type (col2)
-#' @param refs a refOut object
+#' @param batch Batch identifier
+#' @param grp Sample type identifier (e.g. 'Sample', 'QC', 'Ref' or similar)
+#' @param grpType Reference sample identifier (e.g. 'Ref')
+#' @param CVlimit  CV criterion to pass for Ref samples per batch
 #' @param FCLimit Fold-change criterion for intensity (in relation to average intensity FC between batches)
+#'
 #' @return an object containing:
 #' @return PTRef: Reference sample-normalised multi-batch peak table
 #' @return refCorr: Boolean matrix with info on which batches were normalised by reference samples
+#' @return CV: boolean per batch & feature in CV<limit
+#' @return aveInt: average reference intensity per batch & feature
 #' @return PTOrg (indata peaktable)
+#' @return batch Batch identifier
+#' @return grp Sample type identifier
+#' @return grpType Reference sample identifier
 #' @export
-refCorr=function (PT, meta, refs, FCLimit = 5){
-  batch = meta[, 1]
+refCorr=function (PT, batch, grp, grpType='R', CVlimit=0.3, FCLimit = 5){
+  # Extract info and declare/allocate variables
   PTcorr = PT
-  cvm = refs$CV
-  nBatch = nrow(cvm)
-  uniqBatch = rownames(cvm)
-  nFeat = ncol(cvm)
+  uniqBatch=unique(batch)
+  nBatch=length(uniqBatch)
+  nFeat = ncol(PT)
+  CVMat=matrix(nrow=nBatch,ncol=nFeat)
+  rownames(CVMat)=uniqBatch
+  aveIntMat=CVMat
   refCorrMat = matrix(FALSE, nrow = nBatch, ncol = nFeat)
-  cvFlags = apply(cvm, 2, function(x) sum(x, na.rm = TRUE))
-  aveInt = refs$aveInt
   meanIntRat = matrix(1, nrow = nBatch, ncol = nBatch)
+  # Aggregate CV and average intensities for the reference sample type per batch
+  for (b in 1:nBatch) {
+    bat=uniqBatch[b]
+    PTbatch=PT[batch==bat & grp==grpType,]
+    CVMat[b,]=ifelse(cv(PTbatch)<=CVlimit,TRUE,FALSE)  # Criterion for QC feature CV
+    aveIntMat[b,]=apply(PTbatch,2,mean)
+  }
+  # Find average intensity ratios between batches
   for (b in 1:(nBatch - 1)) {
     for (bb in (b + 1):nBatch) {
-      meanIntRat[bb, b] = mean(aveInt[bb, ])/mean(aveInt[b,
-                                                         ])
+      meanIntRat[bb, b] = mean(aveIntMat[bb, ])/mean(aveIntMat[b,])
       meanIntRat[b, bb] = 1/meanIntRat[bb, b]
     }
   }
+  # Check potential normalisation candidates
+  cvFlags = apply(CVMat, 2, function(x) sum(x, na.rm = TRUE))
   whichFeatsCV = which(cvFlags > 1)
   lenCV = length(whichFeatsCV)
-  for (lc in 1:lenCV) {
-    feat = whichFeatsCV[lc]
+  for (feat in 1:nFeat) {
+    # feat = whichFeatsCV[lc]
     featIntRat = matrix(1, nrow = nBatch, ncol = nBatch)
-    for (b in 1:(nBatch - 1)) {
+    for (b in 1:(nBatch - 1)) { # Find intensity ratio per feature between batches
       for (bb in (b + 1):nBatch) {
-        featIntRat[bb, b] = aveInt[bb, feat]/aveInt[b,feat]
+        featIntRat[bb, b] = aveIntMat[bb, feat]/aveIntMat[b,feat]
         featIntRat[b, bb] = 1/featIntRat[bb, b]
       }
     }
-    featFlags = abs(log(featIntRat/meanIntRat)) <= log(FCLimit)
-    featFlags[which(is.na(featFlags),arr.ind=T)]=FALSE
+    featFlags = abs(log(featIntRat/meanIntRat)) <= log(FCLimit)  # Criterion for intensity ratio
+    # Cleanup
+    featFlags[is.na(featFlags)]=FALSE
     for (b in 1:nBatch) {
-      if (cvm[b, feat] == FALSE | is.na(cvm[b, feat])) {
+      if (CVMat[b, feat] == FALSE | is.na(CVMat[b, feat])) {
         featFlags[, b] = featFlags[b, ] = FALSE
       }
     }
-    if (any(colSums(featFlags) > 1)) {
-      refBatch = min(which(colSums(featFlags) == max(colSums(featFlags))))
-      refCorr = featFlags[, refBatch]
-      WhichRefCorr = which(refCorr == TRUE)
-      refInt = aveInt[refBatch, feat]
-      refCorrIndex=WhichRefCorr[!WhichRefCorr==refBatch]
-      for (b in refCorrIndex) {
-        corrFact = refInt/aveInt[b, feat]
-        PTcorr[batch == uniqBatch[b], feat] = PT[batch == uniqBatch[b], feat] * corrFact
-      }
-      featCorr=PTcorr[batch %in% uniqBatch[WhichRefCorr], feat]
-      Median=median(featCorr)
-      WhichPOPCorr=which(refCorr==FALSE)
-      for (n in WhichPOPCorr) {
-        corrFact=Median/median(PTcorr[batch == uniqBatch[n], feat])
-        PTcorr[batch == uniqBatch[n], feat] = PTcorr[batch == uniqBatch[n], feat] * corrFact
-      }
+    refBatch = min(which(colSums(featFlags) == max(colSums(featFlags)))) # Find reference batch
+    refCorr = featFlags[, refBatch] # Extract flags for reference sample correction
+    WhichRefCorr = which(refCorr) # Find which batches to normalise to the reference
+    refInt = aveIntMat[refBatch, feat] # Ref batch intensity
+    refCorrIndex=WhichRefCorr[WhichRefCorr!=refBatch]
+    for (b in refCorrIndex) { # Correct batches to reference batch intensity
+      corrFact = refInt/aveIntMat[b, feat]
+      PTcorr[batch == uniqBatch[b], feat] = PT[batch == uniqBatch[b], feat] * corrFact
+    }
+    # Perfrom population (median) normalisation for the other batches
+    featCorr=PTcorr[batch %in% uniqBatch[WhichRefCorr], feat] # All samples corrected by reference samples ->
+    Median=median(featCorr) # Extract their median value
+    WhichPOPCorr=which(!refCorr) # Which batches to correct by population median instead
+    for (n in WhichPOPCorr) {
+      corrFact=Median/median(PTcorr[batch == uniqBatch[n], feat])
+      PTcorr[batch == uniqBatch[n], feat] = PTcorr[batch == uniqBatch[n], feat] * corrFact
     }
     refCorrMat[, feat] = refCorr
   }
-  return(list(PTRef = PTcorr, refCorr = refCorrMat, PTOrg = PT))
+  return(list(PTRef = PTcorr, refCorr = refCorrMat, CV = CVMat, aveInt = aveIntMat, PTOrg = PT, batch = batch, grp = grp, grpType = grpType))
 }
+

@@ -25,4 +25,3 @@ plotAlign(batchflag, alignindex, clust, plotType = c("plot", "pdf", "png"),
 \description{
 plotAlign will plot clusters of aligned features
 }
-

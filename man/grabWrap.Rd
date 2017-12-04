@@ -27,4 +27,3 @@ Batch: A batch object
 \description{
 Wrapper function for grabbing QCs, reference and entire batch samples from XCMS-set
 }
-

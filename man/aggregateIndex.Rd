@@ -17,4 +17,3 @@ An object (list) with aggregated alignment information
 \description{
 aggregateIndex will aggregate alignment indices IF present for both sample types
 }
-

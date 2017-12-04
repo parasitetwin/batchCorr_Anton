@@ -15,4 +15,3 @@ long-term reference samples from three batches of LC-MS metabolomics data.
 Peaktable contains all values, i.e. after hard integration of EICs.
 }
 \keyword{datasets}
-

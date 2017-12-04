@@ -15,4 +15,3 @@ long-term reference samples from three batches of LC-MS metabolomics data.
 Peaktable contains missing values, used for the batch alignment algorithm.
 }
 \keyword{datasets}
-

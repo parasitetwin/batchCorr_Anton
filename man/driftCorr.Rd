@@ -36,4 +36,3 @@ drift corrected corr/batch samples
 \description{
 Perform signal intensity drift correction if resulting in increased quality of data (measured by reduced root-mean-squared distances of reference samples).
 }
-

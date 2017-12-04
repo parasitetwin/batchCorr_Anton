@@ -21,4 +21,3 @@ A drift corrected object with QC features CV<limit containing final peak table
 \description{
 Wrapper function for all drift subfunctions (clust, driftCalc, driftCorr, cleanVar)
 }
-

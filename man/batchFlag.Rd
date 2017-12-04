@@ -38,4 +38,3 @@ flagType: experimental: Use at own risk
 \description{
 batchFlag will aggregate presentness/missingness per feature at batch level within the combination: batch x sample type
 }
-

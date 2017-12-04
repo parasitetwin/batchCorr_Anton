@@ -35,4 +35,3 @@ meta: metadata (indata)
 \description{
 batchAlign will use the 'batchFlag' and 'alignIndex' information to align sample peaks that are systematically misaligned across batches.
 }
-

@@ -12,4 +12,3 @@ BData
 Batch object for within batch correction of 'Batch_B'
 }
 \keyword{datasets}
-

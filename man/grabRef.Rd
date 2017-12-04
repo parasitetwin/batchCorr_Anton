@@ -27,4 +27,3 @@ Feats: Features (peak table)
 \description{
 Bring out reference sample group from an XCMS object: Exclude features missing from QC samples
 }
-

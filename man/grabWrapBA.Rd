@@ -29,4 +29,3 @@ Batch: A batch object
 \description{
 Wrapper function for grabbing QCs, reference and entire batch samples combining information from XCMS object and batch-aligned peaktable.
 }
-

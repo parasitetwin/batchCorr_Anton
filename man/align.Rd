@@ -27,4 +27,3 @@ clusters: groups of features linked through mutual events
 \description{
 align will find candidates for alignment among features that have systematic missingness "within box" of maximum m/z & rt differences. Used internally.
 }
-

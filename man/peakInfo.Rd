@@ -17,4 +17,3 @@ a matrix with m/z and rt of features as columns
 \description{
 Extract features from peak table and report their m/z and rt values
 }
-

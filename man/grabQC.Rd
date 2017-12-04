@@ -36,4 +36,3 @@ NAs: which features are missing from QC samples
 Bring out 'QC' group from an XCMS object: Scaled and 100% NAs removed
 #' **Note** that `inj` needs to be either **manually specified OR recoded** to suit your sample naming strategy.
 }
-

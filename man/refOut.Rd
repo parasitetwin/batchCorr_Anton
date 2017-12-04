@@ -25,4 +25,3 @@ aveInt: average reference intensity per batch & feature
 \description{
 Reference samples are aggregated on batch level
 }
-

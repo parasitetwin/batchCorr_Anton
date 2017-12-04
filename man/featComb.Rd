@@ -17,4 +17,3 @@ a vector with the features present in at least `batchLimit` batches
 \description{
 Extract features from peak table and report their m/z and rt values
 }
-

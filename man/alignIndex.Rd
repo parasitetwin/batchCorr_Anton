@@ -42,4 +42,3 @@ oldClusters: clusters before splitting overcrowded clusters
 \description{
 alignIndex will find features systematically misaligned between batches using "sample type" information.
 }
-

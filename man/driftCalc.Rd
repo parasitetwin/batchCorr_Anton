@@ -34,4 +34,3 @@ varClust
 \description{
 Clustered, scaled QC features are pooled together and intensity drift patterns are modelled per cluster
 }
-
