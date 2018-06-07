@@ -4,10 +4,10 @@
 \alias{makeBatchObject}
 \title{Prepare a Batch object for drift correction}
 \usage{
-makeBatchObject(BatchPeakTab, inj, QCObject)
+makeBatchObject(peakTable, inj, QCObject)
 }
 \arguments{
-\item{BatchPeakTab}{Peak table (without missing values). Samples in rows; Features in columns; colnames as mz@rt}
+\item{peakTable}{Peak table (without missing values). Samples in rows; Features in columns; colnames as mz@rt}
 
 \item{inj}{Injection sequence number for Batch samples}
 

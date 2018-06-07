@@ -49,9 +49,7 @@ grabAlign=function(XS,batch,grp) {
 #' @export
 batchFlag=function(PTnofill,batch,sampleGroup,peakInfo,NAhard=0.8,NAsoft=0.5,quantileSoft=0.1) {
   quant=quantile(PTnofill,quantileSoft,na.rm=TRUE)
-  batch=meta[,1]
   uniqBatch=unique(batch)
-  sampleGroup=meta[,2]
   uniqGrp=unique(sampleGroup)
   n=length(uniqBatch)*length(uniqGrp)
   flagAll=flagType=flagHard=flagSoft=matrix(nrow=n,ncol=ncol(PTnofill))

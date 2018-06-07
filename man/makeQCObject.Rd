@@ -4,10 +4,10 @@
 \alias{makeQCObject}
 \title{Prepare a QC object for drift correction}
 \usage{
-makeQCObject(QCPeakTab, inj)
+makeQCObject(peakTable, inj)
 }
 \arguments{
-\item{QCPeakTab}{Peak table (without missing values). Samples in rows; Features in columns; colnames as mz@rt}
+\item{peakTable}{Peak table (without missing values). Samples in rows; Features in columns; colnames as mz@rt}
 
 \item{inj}{Injection sequence number for QC samples}
 }

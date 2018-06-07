@@ -4,12 +4,19 @@
 \alias{driftWrap}
 \title{DC: Perform drift correction}
 \usage{
-driftWrap(grabObj, refType, CVlimit = 0.3, report = FALSE)
+driftWrap(QCObject, modelNames = c("VVE"), G = seq(1, 40, by = 3),
+  BatchObject, RefObject = NULL, CVlimit = 0.3, report = FALSE)
 }
 \arguments{
-\item{grabObj}{a grabWrap object}
+\item{QCObject}{QC Object (as obtained from `makeQCObject()`)}
 
-\item{refType}{type of reference sample strategy used (at present "one" or "none" supported)}
+\item{modelNames}{Which MClust geometries to test (see mclust documentation)}
+
+\item{G}{Which numbers of clusters to test (see mclust documentation)}
+
+\item{BatchObject}{Batch object (as obtained from `makeBatchObject()`) to be corrected for drift}
+
+\item{RefObject}{Optional reference object (as obtained from `makeBatchObject()`) to validate whether QC correction improves data quality}
 
 \item{CVlimit}{QC feature CV limit as final feature inclusion criterion}
 

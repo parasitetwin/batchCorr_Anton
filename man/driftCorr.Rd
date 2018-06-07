@@ -4,13 +4,13 @@
 \alias{driftCorr}
 \title{DC: Correct for intensity drift per cluster}
 \usage{
-driftCorr(QCDriftCalc, refList = NA, refType = c("none", "one", "many"),
-  CorrObj = NA, report = FALSE)
+driftCorr(QCDriftCalc, refList = NULL, refType = c("none", "one", "many"),
+  CorrObj = NULL, report = FALSE)
 }
 \arguments{
 \item{QCDriftCalc}{a DriftCalc object}
 
-\item{refList}{a reference sample onject with 'inj' and 'Feats'}
+\item{refList}{a reference sample object with 'inj' and 'Feats'}
 
 \item{refType}{at present, the options "one" and "none" are supported for one or no reference samples present.}
 

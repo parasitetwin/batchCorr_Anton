@@ -4,7 +4,7 @@
 \alias{alignIndex}
 \title{BA: Find alignment candidates}
 \usage{
-alignIndex(batchflag, flagType = c("Hard", "Soft", "All"), grpType = "Q",
+alignIndex(batchflag, flagType = c("Hard", "Soft", "All"), grpType = "QC",
   mzdiff = 0.005, rtdiff = 10, report = TRUE, reportName = "splits")
 }
 \arguments{

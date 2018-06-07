@@ -4,7 +4,7 @@
 \alias{batchAlign}
 \title{BA: Alignment of peaktable based on alignIndex and batchFlag data}
 \usage{
-batchAlign(batchflag, alignindex, peaktable_filled, meta)
+batchAlign(batchflag, alignindex, peaktable_filled, batch)
 }
 \arguments{
 \item{batchflag}{a table of presentness/missingness per batch x sample type for the features within cluster}
@@ -13,7 +13,7 @@ batchAlign(batchflag, alignindex, peaktable_filled, meta)
 
 \item{peaktable_filled}{a peaktable without missing values (ie after hard filling or imputation)}
 
-\item{meta}{a matrix of metadata with batch in column 1 and sample type in column 2}
+\item{batch}{vector (length = nSamples from peaktable_filled) containing batch information (e.g. A, B, C)}
 }
 \value{
 An object (list) consisting of the following features:
@@ -29,8 +29,6 @@ boolKeep: boolean vector of features kept after alignment (the rest of the combi
 boolAveragedFill: boolean vector of features where alignment has been made using feature averaging (i.e. where batches are missing within features). Length: same as orgiginal number of features
 
 aI: alignIndex object (indata)
-
-meta: metadata (indata)
 }
 \description{
 batchAlign will use the 'batchFlag' and 'alignIndex' information to align sample peaks that are systematically misaligned across batches.

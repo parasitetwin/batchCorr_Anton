@@ -4,10 +4,14 @@
 \alias{peakInfo}
 \title{Extract m/z and rt from peak table}
 \usage{
-peakInfo(PT, start = 3)
+peakInfo(PT, sep = "_", timepos = 2, start = 1)
 }
 \arguments{
 \item{PT}{a peak table with variables as columns}
+
+\item{sep}{character separating mz from rt, e.g. "_"}
+
+\item{timepos}{Which position carries info about rt (1 for before separator; 2 for after separator)}
 
 \item{start}{character from which to start the read of peakInfo (from PT colnames)}
 }
