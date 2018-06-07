@@ -1,14 +1,19 @@
 #' Extract m/z and rt from peak table
 #'
 #' Extract features from peak table and report their m/z and rt values
+#'
 #' @param PT a peak table with variables as columns
+#' @param sep character separating mz from rt, e.g. "_"
 #' @param start character from which to start the read of peakInfo (from PT colnames)
+#' @param timepos Which position carries info about rt (1 for before separator; 2 for after separator)
+#'
 #' @return a matrix with m/z and rt of features as columns
 #' @export
-peakInfo=function(PT,start=3) {
-  peakInfo=matrix(unlist(strsplit(colnames(PT),'@')),ncol=2,byrow=TRUE)
+peakInfo=function(PT,sep='_',timepos=2,start=1) {
+  peakInfo=matrix(unlist(strsplit(colnames(PT),sep)),ncol=2,byrow=TRUE)
   peakInfo[,1]=substr(peakInfo[,1],start,max(nchar(peakInfo[,1])))
   peakInfo=matrix(as.numeric(peakInfo),ncol=2)
+  if (timepos!=2) peakInfo=peakInfo[,2:1]
   colnames(peakInfo)=c('mz','rt')
   rownames(peakInfo)=paste('feature',1:nrow(peakInfo),sep='_')
   return(peakInfo)

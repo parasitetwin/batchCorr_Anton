@@ -54,6 +54,7 @@ The development and inner workings of these algorithms are reported in:
 ## Version history
 version | date  | comment
 :-----: | :---: | :------
+0.2.0 | 18-06-07 | Major facelift: Removed xcms dependencies & working only with peaktables/metadata; New getters; New workflow; Embryo for tutorial
 0.1.9 | 17-12-04 | Added makeObject functions and merged refOut with refCorr
 0.1.8 | 17-02-06 | Bugfix `refCorr`: Fixed neg ratios -> FALSE.
 0.1.7 | 16-04-12 | Added `data` statement to `workflow.R` and added population normalization to `refCorr`.

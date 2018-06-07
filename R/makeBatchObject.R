@@ -1,6 +1,6 @@
 #' Prepare a Batch object for drift correction
 #'
-#' @param BatchPeakTab Peak table (without missing values). Samples in rows; Features in columns; colnames as mz@rt
+#' @param peakTable Peak table (without missing values). Samples in rows; Features in columns; colnames as mz@rt
 #' @param inj Injection sequence number for Batch samples
 #' @param QCObject QC Object (to check injection sequence compatibility)
 #'
@@ -8,11 +8,12 @@
 #' @export
 #'
 #' @examples BatchObject=makeBatchObject(BatchPeakTable, BatchInjections, QCObject)
-makeBatchObject=function (BatchPeakTab, inj, QCObject) 
+makeBatchObject=function (peakTable, inj, QCObject)
 {
+  if(length(inj)!=nrow(peakTable)) stop ('mismatch number of samples in peak table and injection sequence')
   QCInj=QCObject$inj
   minInj=min(QCInj)
   maxInj=max(QCInj)
   if(any(inj<minInj) | any(inj>maxInj)) stop('Batch injections outside of QCs. Correction is not possible.')
-  return(list(inj = inj, Feats = BatchPeakTab))
+  return(list(inj = inj, Feats = peakTable))
 }

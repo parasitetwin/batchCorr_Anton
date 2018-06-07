@@ -30,12 +30,15 @@ grabAlign=function(XS,batch,grp) {
 #' BA: Aggregate presense/missingness per batch
 #'
 #' batchFlag will aggregate presentness/missingness per feature at batch level within the combination: batch x sample type
+#'
 #' @param PTnofill a peaktable with missing values (ie without either hard filling or imputation)
-#' @param meta a matrix of metadata with batch in column 1 and sample type in column 2
 #' @param peakInfo a matrix with m/z (col1) and rt (col2) of features (rows)
 #' @param NAhard proportion of NAs within batch for feature to be considered missing
+#' @param batch vector (length = nSamples) containing batch information (e.g. A, B, C)
+#' @param sampleGroup vector (length = nSamples) containing sample group information (e.g. QC, Sample, Reference)
 #' @param NAsoft experimental: Use at own risk
 #' @param quantileSoft experimental: Use at own risk
+#'
 #' @return meta: metadata aggretated by batch x sample type
 #' @return flagHard: a table of presentness/missingness per batch x sample type
 #' @return mz: m/z values of the features
@@ -44,22 +47,22 @@ grabAlign=function(XS,batch,grp) {
 #' @return flagSoft: experimental: Use at own risk
 #' @return flagType: experimental: Use at own risk
 #' @export
-batchFlag=function(PTnofill,meta,peakInfo,NAhard=0.8,NAsoft=0.5,quantileSoft=0.1) {
+batchFlag=function(PTnofill,batch,sampleGroup,peakInfo,NAhard=0.8,NAsoft=0.5,quantileSoft=0.1) {
   quant=quantile(PTnofill,quantileSoft,na.rm=TRUE)
   batch=meta[,1]
   uniqBatch=unique(batch)
-  grp=meta[,2]
-  uniqGrp=unique(grp)
+  sampleGroup=meta[,2]
+  uniqGrp=unique(sampleGroup)
   n=length(uniqBatch)*length(uniqGrp)
   flagAll=flagType=flagHard=flagSoft=matrix(nrow=n,ncol=ncol(PTnofill))
   colnames(flagAll)=colnames(flagType)=colnames(PTnofill)
   batchMeta=matrix(nrow=n,ncol=2)
-  colnames(batchMeta)=c('batch','grp')
+  colnames(batchMeta)=c('batch','sampleGroup')
   i=0
   for (b in uniqBatch) {
     for (g in uniqGrp) {
       i=i+1
-      PTsub=PTnofill[batch==b & grp==g,]
+      PTsub=PTnofill[batch==b & sampleGroup==g,]
       NAs=apply(PTsub,2,function(x) sum(is.na(x))/length(x))
       intMean=apply(PTsub,2,function(x) mean(x,na.rm=TRUE))
       flagAll[i,]=ifelse(NAs>=NAhard,1,ifelse(NAs>=NAsoft & intMean<quant,1,0))
@@ -295,12 +298,12 @@ plotClust=function(batchflag,grpFlag,cluster,text,color=2,mzwidth=0.02,rtwidth=1
 #' @return oldFeatures: features before splitting overcrowded clusters
 #' @return oldClusters: clusters before splitting overcrowded clusters
 #' @export
-alignIndex=function(batchflag,flagType=c('Hard','Soft','All'),grpType='Q',mzdiff=0.005,rtdiff=10,report=TRUE,reportName='splits') {
+alignIndex=function(batchflag,flagType=c('Hard','Soft','All'),grpType='QC',mzdiff=0.005,rtdiff=10,report=TRUE,reportName='splits') {
   bF=batchflag
   if (missing(flagType)) flagType='Hard'
-  if (flagType=='Hard') grpSub=bF$flagHard[bF$meta[,2]==grpType,] # Take out matrix based on group type (such as Q for QC or R for Ref)
-  if (flagType=='Soft') grpSub=bF$flagSoft[bF$meta[,2]==grpType,] # Take out matrix based on group type (such as Q for QC or R for Ref)
-  if (flagType=='All') grpSub=bF$flagAll[bF$meta[,2]==grpType,] # Take out matrix based on group type (such as Q for QC or R for Ref)
+  if (flagType=='Hard') grpSub=bF$flagHard[bF$meta[,2]==grpType,] # Take out matrix based on group type (such as QC or long-term Ref)
+  if (flagType=='Soft') grpSub=bF$flagSoft[bF$meta[,2]==grpType,] # Take out matrix based on group type (such as QC or long-term Ref)
+  if (flagType=='All') grpSub=bF$flagAll[bF$meta[,2]==grpType,] # Take out matrix based on group type (such as QC or long-term Ref)
   mz=bF$mz
   rt=bF$rt
   a2=a1=align(grpSub,mz,rt,mzdiff=mzdiff,rtdiff=rtdiff)
@@ -333,7 +336,7 @@ alignIndex=function(batchflag,flagType=c('Hard','Soft','All'),grpType='Q',mzdiff
     feats=a2$features$featureIndex[a2$features$cluster==c]
     shiftList[feats]=feats[1]
     shiftGrp[feats]=as.character(grpType)
-    shift=data.frame(list=shiftList,grp=shiftGrp)
+    shift=data.frame(list=shiftList,sampleGroup=shiftGrp)
   }
   return(list(grpType=grpType,shift=shift,events=a2$events,features=a2$features,clusters=a2$clusters,oldFeatures=a1$features,oldClusters=a1$clusters))
 }
@@ -400,10 +403,12 @@ aggregateIndex=function(aI1,aI2) {
 #' BA: Alignment of peaktable based on alignIndex and batchFlag data
 #'
 #' batchAlign will use the 'batchFlag' and 'alignIndex' information to align sample peaks that are systematically misaligned across batches.
+#'
 #' @param batchflag a table of presentness/missingness per batch x sample type for the features within cluster
 #' @param alignindex An object (list) consisting of alignment information
 #' @param peaktable_filled a peaktable without missing values (ie after hard filling or imputation)
-#' @param meta a matrix of metadata with batch in column 1 and sample type in column 2
+#' @param batch vector (length = nSamples from peaktable_filled) containing batch information (e.g. A, B, C)
+#'
 #' @return An object (list) consisting of the following features:
 #' @return PTalign: A peaktable with batch aligned peak areas
 #' @return boolAveragedAlign: boolean vector of features where alignment has been made using feature averaging (i.e. where batches are missing within features). Length: same as final number of features
@@ -411,14 +416,13 @@ aggregateIndex=function(aI1,aI2) {
 #' @return boolKeep: boolean vector of features kept after alignment (the rest of the combined features are deleted)
 #' @return boolAveragedFill: boolean vector of features where alignment has been made using feature averaging (i.e. where batches are missing within features). Length: same as orgiginal number of features
 #' @return aI: alignIndex object (indata)
-#' @return meta: metadata (indata)
 #' @export
-batchAlign=function(batchflag,alignindex,peaktable_filled,meta) {
+batchAlign=function(batchflag,alignindex,peaktable_filled,batch) {
   bF=batchflag
   flags=bF$flagHard
   batchFlags=as.matrix(aggregate(flags,list(bF$meta[,1]),'sum')[,-1])
-  batch=bF$meta[,1]
-  uniqBatch=unique(batch)
+  bFbatch=bF$meta[,1]
+  uniqBatch=unique(bFbatch)
   aI=alignindex
   shift=aI$shift$list
   uniqSh=unique(shift[shift!=0])
@@ -450,7 +454,7 @@ batchAlign=function(batchflag,alignindex,peaktable_filled,meta) {
           bFlag=which(batchFlags[,f]>0)
           for (bFl in bFlag) {
             batchID=uniqBatch[bFl]
-            boolFeat=boolFeat|ifelse(meta[,1]==batchID,T,F)
+            boolFeat=boolFeat|ifelse(batch==batchID,T,F)
           }
           newFeat[boolFeat]=PTfill[boolFeat,f]
         }
@@ -461,7 +465,7 @@ batchAlign=function(batchflag,alignindex,peaktable_filled,meta) {
           boolFeat=rep(FALSE,nrow(PTfill))
           for (z in zeros) {
             batchID=uniqBatch[z]
-            boolFeat=boolFeat|ifelse(meta[,1]==batchID,T,F)
+            boolFeat=boolFeat|ifelse(batch==batchID,T,F)
           }
           newFeat[boolFeat]=aveFeat[boolFeat]
         }
@@ -472,5 +476,5 @@ batchAlign=function(batchflag,alignindex,peaktable_filled,meta) {
     }
   }
   PTfill=PTfill[,boolKeep]
-  return(list(PTalign=PTfill, boolAveragedAlign=boolAveraged[boolKeep], PTfill=peaktable_filled, boolKeep=boolKeep, boolAveragedFill=boolAveraged, aI=alignindex, meta=meta))
+  return(list(PTalign=PTfill, boolAveragedAlign=boolAveraged[boolKeep], PTfill=peaktable_filled, boolKeep=boolKeep, boolAveragedFill=boolAveraged, aI=alignindex))
 }

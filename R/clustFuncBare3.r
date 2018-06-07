@@ -1,75 +1,3 @@
-#' DC: Grab QC samples
-#'
-#' Bring out 'QC' group from an XCMS object: Scaled and 100% NAs removed
-#' #' **Note** that `inj` needs to be either **manually specified OR recoded** to suit your sample naming strategy.
-#' @param XS An XCMS object
-#' @param peakTab peaktable. Defaults to `xcms::peakTab(SX)`. Specify `PTalign` from `batchAlign` object for multibatch aligned data.
-#' @param batch a batch identifier
-#' @param grp an identifyer for the QC samples
-#' @param inj a vector of QC injection numbers in sequence. Defaults to defined function to suit my naming strategy. Pls change accordingly.
-#' @return a list containing:
-#' @return batch: batch (as input)
-#' @return inj: a vector of QC injection numbers in sequence (same as indata OR generated)
-#' @return Feats: Scaled features (peak table)
-#' @return RawFeats: Unscaled features including 100% NA features (peak table)
-#' @return RawFeatsNaRm: Unscaled features excluding 100% NA features (peak table)
-#' @return NAs: which features are missing from QC samples
-#' @export
-## Bring out 'QC' group: Scaled and NAs removed
-grabQC=function(XS,peakTab,batch,grp='QC',inj) {
-	incl=(XS@phenoData[,1]==batch & XS@phenoData[,2]==grp)
-	if (missing(peakTab)) peakTab=peakTab(XS)
-	QC=peakTab[incl,]
-	QCCV=cv(QC)
-	QCscale=scale(QC,center=FALSE)
-	NAs=colSums(is.na(QCscale))>0
-	QCRawNaRm=QC[,!NAs]
-	QCFeats=QCscale[,!NAs]
-	if (missing(inj)) inj=as.numeric(substr(matrix(unlist(strsplit(rownames(QC),'_')),ncol=6,byrow=TRUE)[,6],1,3))
-	return(list(batch=batch,inj=inj,Feats=QCFeats,RawFeats=QC,RawFeatsNaRm=QCRawNaRm,NAs=NAs))
-}
-
-#' DC: Grab Reference samples from same batch as QC samples
-#'
-#' Bring out reference sample group from an XCMS object: Exclude features missing from QC samples
-#' @param XS An XCMS object
-#' @param peakTab peaktable. Defaults to `xcms::peakTab(SX)`. Specify `PTalign` from `batchAlign` object for multibatch aligned data.
-#' @param QC a grabQC object
-#' @param grp an identifyer for the reference samples
-#' @param inj a vector of Ref injection numbers in sequence. Defaults to defined function to suit my naming strategy. Pls change accordingly.
-#' @return a list containing:
-#' @return inj: a vector of reference sample injection numbers in sequence (same as indata OR generated)
-#' @return Feats: Features (peak table)
-#' @export
-## Bring out Reference samples from same batch as QCs
-grabRef=function(XS,peakTab,QC,grp='Ref',inj) {
-  incl=(XS@phenoData[,1]==QC$batch & XS@phenoData[,2]==grp)
-  if (missing(peakTab)) peakTab=peakTab(XS)
-  Feats=peakTab[incl,!QC$NAs]
-	if (missing(inj)) inj=as.numeric(substr(matrix(unlist(strsplit(rownames(Feats),'_')),ncol=6,byrow=TRUE)[,6],1,3))
-	return(list(inj=inj,Feats=Feats))
-}
-
-#' DC: Grab Batch samples
-#'
-#' Bring out all batch samples from an XCMS object: Exclude features missing from QC samples
-#' @param XS An XCMS object
-#' @param peakTab peaktable. Defaults to `xcms::peakTab(SX)`. Specify `PTalign` from `batchAlign` object for multibatch aligned data.
-#' @param QC a grabQC object
-#' @param inj a vector of batch injection numbers in sequence. Defaults to defined function to suit my naming strategy. Pls change accordingly.
-#' @return a list containing:
-#' @return inj: a vector of sample injection numbers in sequence (same as indata OR generated)
-#' @return Feats: Features (peak table)
-#' @export
-## Bring out entire batch same as QCs
-grabBatch=function(XS,peakTab,QC,inj) {
-  incl=(XS@phenoData[,1]==QC$batch)
-  if (missing(peakTab)) peakTab=peakTab(XS)
-  Feats=peakTab[incl,!QC$NAs]
-	if (missing(inj)) inj=as.numeric(substr(matrix(unlist(strsplit(rownames(Feats),'_')),ncol=6,byrow=TRUE)[,6],1,3))
-	return(list(inj=inj,Feats=Feats))
-}
-
 #' Coefficient of variation (CV)
 #'
 #' Calculates CV per column in a matrix. Aka relative standard deviation (RSD).
@@ -241,7 +169,7 @@ driftCalc=function(QCClust,smoothFunc=c('spline','loess'),spar=0.2,report=FALSE)
 #'
 #' Perform signal intensity drift correction if resulting in increased quality of data (measured by reduced root-mean-squared distances of reference samples).
 #' @param QCDriftCalc a DriftCalc object
-#' @param refList a reference sample onject with 'inj' and 'Feats'
+#' @param refList a reference sample object with 'inj' and 'Feats'
 #' @param refType at present, the options "one" and "none" are supported for one or no reference samples present.
 #' @param CorrObj a batch object to be corrected with 'inj' and 'Feats'. If not present defaults to the QC object
 #' @param report boolean whether to print a pdf report of drift models
@@ -254,7 +182,7 @@ driftCalc=function(QCClust,smoothFunc=c('spline','loess'),spar=0.2,report=FALSE)
 #' @return drift corrected corr/batch samples
 #' @export
 ## Perform drift correction for clusters IF rmsdRef is improved
-driftCorr=function(QCDriftCalc,refList=NA,refType=c('none','one','many'),CorrObj=NA,report=FALSE) {
+driftCorr=function(QCDriftCalc,refList=NULL,refType=c('none','one','many'),CorrObj=NULL,report=FALSE) {
 	if (missing(refType)) refType='none'
 	if (refType=='many') {
 		cat('\nMultiple reference samples not yet implemented\n')
@@ -424,73 +352,35 @@ cleanVar=function(QCCorr,CVlimit=.2,report=FALSE) {
 	return(QCFinal)
 }
 
-#' DC: Grab samples for drift correction
-#'
-#' Wrapper function for grabbing QCs, reference and entire batch samples from XCMS-set
-#' @param XS an XCMS object
-#' @param batch a batch identifier
-#' @param QC a QC sample identifier
-#' @param Ref a reference sample identifier
-#' @return An object containing:
-#' @return QC: A QC object
-#' @return Ref: A Ref object
-#' @return Batch: A batch object
-#' @export
-## Wrapper function for grabbing QCs, reference and entire batch samples from XCMS-set
-grabWrap=function(XS,batch,QC='QC',Ref='Ref') {
-	QCObj=grabQC(XS,batch=batch,grp=QC)
-	RefObj=grabRef(XS,QCObj,grp=Ref)
-	BatchObj=grabBatch(XS,QCObj)
-	return(list(QC=QCObj,Ref=RefObj,Batch=BatchObj))
-}
 
-#' DC: Grab samples for drift correction after batch alignment
-#'
-#' Wrapper function for grabbing QCs, reference and entire batch samples combining information from XCMS object and batch-aligned peaktable.
-#' @param XS an XCMS object
-#' @param PT a master peaktable after batch alignment
-#' @param batch a batch identifier
-#' @param QC a QC sample identifier
-#' @param Ref a reference sample identifier
-#' @return An object containing:
-#' @return QC: A QC object
-#' @return Ref: A Ref object
-#' @return Batch: A batch object
-#' @export
-## Wrapper function for grabbing QCs, reference and entire batch samples from XCMS-set
-grabWrapBA=function(XS,PT,batch,QC='QC',Ref='Ref') {
-  QCObj=grabQC(XS,PT,batch=batch,grp=QC)
-  RefObj=grabRef(XS,PT,QCObj,grp=Ref)
-  BatchObj=grabBatch(XS,PT,QCObj)
-  return(list(QC=QCObj,Ref=RefObj,Batch=BatchObj))
-}
 
 #' DC: Perform drift correction
 #'
 #' Wrapper function for all drift subfunctions (clust, driftCalc, driftCorr, cleanVar)
-#' @param grabObj a grabWrap object
-#' @param refType type of reference sample strategy used (at present "one" or "none" supported)
+#'
+#' @param QCObject QC Object (as obtained from `makeQCObject()`)
+#' @param modelNames Which MClust geometries to test (see mclust documentation)
+#' @param G Which numbers of clusters to test (see mclust documentation)
+#' @param BatchObject Batch object (as obtained from `makeBatchObject()`) to be corrected for drift
+#' @param RefObject Optional reference object (as obtained from `makeBatchObject()`) to validate whether QC correction improves data quality
 #' @param CVlimit QC feature CV limit as final feature inclusion criterion
 #' @param report boolean whether to print a pdf report of drift models
+#'
 #' @return A drift corrected object with QC features CV<limit containing final peak table
 #' @export
-## Wrapper function for all drift subfunctions (clust, driftCalc, driftCorr, cleanVar)
-driftWrap=function(grabObj,refType,CVlimit=0.3,report=FALSE) {
-	QCObj=grabObj$QC
-	RefObj=grabObj$Ref
-	CorrObj=grabObj$Batch
-	if (min(RefObj$inj)<min(QCObj$inj) | min(CorrObj$inj)<min(QCObj$inj)) {
-		cat('\nReference or test injection outside drift calculation region: Before first QCs injection.')
-		cat('\nCalculation aborted\n')
-		break
-	}
-	if (max(RefObj$inj)>max(QCObj$inj) | max(CorrObj$inj)>max(QCObj$inj)) {
-		cat('\nReference or test injection outside drift calculation region: After last QCs injection.')
-		cat('\nCalculation aborted\n')
-		break
-	}
-	A=driftList=clust(QCObj$inj,QCObj$Feats,report=report)
-	B=driftList=driftCalc(driftList,report=report)
-	D=driftList=driftCorr(driftList,refList=RefObj,refType=refType,CorrObj=CorrObj,report=report)
-	E=driftList=cleanVar(driftList,CVlimit=CVlimit,report=report)
+driftWrap=function(QCObject, modelNames=c('VVE'), G=seq(1,40,by=3), BatchObject, RefObject=NULL, CVlimit=0.3, report=FALSE) {
+  if (missing(RefObject)) refType='none' else refType='one'
+  cat ('\nMclust ')
+	driftList=clust(QCObject$inj,QCObject$Feats,modelNames=modelNames, G=G, report=report)
+	cat('\nMClust final model with',driftList$clust$G,'clusters and',driftList$clust$modelName,'geometry.')
+  cat('\nBIC performed in',driftList$BICTime,'seconds and clustering in',driftList$clustTime,'seconds.')
+	driftList=driftCalc(driftList,report=report)
+	cat('\nCalculation of QC drift profiles performed.')
+	driftList=driftCorr(driftList,refList=RefObject,refType=refType,CorrObj=BatchObject,report=report)
+	cat('\nDrift correction of',sum(driftList$actionInfo$action!='None'),'out of',driftList$clust$G,'clusters ')
+	if (refType=='none') cat('using QC samples only.') else cat('validated by external reference samples.')
+	driftList=cleanVar(driftList,CVlimit=CVlimit,report=report)
+	cat('\nFiltering by QC CV <',CVlimit,'->', sum(driftList$actionInfo$nAfter), 'features out of', sum(driftList$actionInfo$nBefore), 'kept in the peak table.')
+	cat('\nPeak table in $TestFeatsFinal, final variables in $finalVars and cluster info in $actionInfo.')
+	return(driftList)
 }
