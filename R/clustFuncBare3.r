@@ -349,6 +349,8 @@ cleanVar=function(QCCorr,CVlimit=.2,report=FALSE) {
 	QCCorr$finalVars=finalVars
 	QCCorr$QCcvs=QCcvs
 	QCFinal=QCCorr
+	cat('\nFiltering by QC CV <',CVlimit,'->', sum(QCFinal$actionInfo$nAfter), 'features out of', sum(QCFinal$actionInfo$nBefore), 'kept in the peak table.')
+	cat('\nPeak table in $TestFeatsFinal, final variables in $finalVars and cluster info in $actionInfo.')
 	return(QCFinal)
 }
 
@@ -379,8 +381,9 @@ driftWrap=function(QCObject, modelNames=c('VVE'), G=seq(1,40,by=3), BatchObject,
 	driftList=driftCorr(driftList,refList=RefObject,refType=refType,CorrObj=BatchObject,report=report)
 	cat('\nDrift correction of',sum(driftList$actionInfo$action!='None'),'out of',driftList$clust$G,'clusters ')
 	if (refType=='none') cat('using QC samples only.') else cat('validated by external reference samples.')
+	cat('\nCorrected peak table in $TestFeatsFinal')
 	driftList=cleanVar(driftList,CVlimit=CVlimit,report=report)
 	cat('\nFiltering by QC CV <',CVlimit,'->', sum(driftList$actionInfo$nAfter), 'features out of', sum(driftList$actionInfo$nBefore), 'kept in the peak table.')
-	cat('\nPeak table in $TestFeatsFinal, final variables in $finalVars and cluster info in $actionInfo.')
+	cat('\nFiltered peak table in $TestFeatsFinal, final variables in $finalVars and cluster info in $actionInfo.\n')
 	return(driftList)
 }
