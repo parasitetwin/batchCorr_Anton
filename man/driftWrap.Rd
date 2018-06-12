@@ -4,8 +4,8 @@
 \alias{driftWrap}
 \title{DC: Perform drift correction}
 \usage{
-driftWrap(QCObject, modelNames = c("VVE"), G = seq(1, 40, by = 3),
-  BatchObject, RefObject = NULL, CVlimit = 0.3, report = FALSE)
+driftWrap(QCObject, modelNames = NULL, G = seq(1, 40, by = 3), BatchObject,
+  RefObject = NULL, CVlimit = 0.3, report = FALSE)
 }
 \arguments{
 \item{QCObject}{QC Object (as obtained from `makeQCObject()`)}

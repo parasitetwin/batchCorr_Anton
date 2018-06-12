@@ -54,6 +54,7 @@ clust=function(QCInjs,QCFeats,modelNames=c('VVE'),G=seq(1,52,by=3),report=FALSE)
 	# modelNames=c('VII','VEI','VVI','VEE','VEV','VVE','VVV')
 	# modelNames=c('EEE','EEV','EVE','EVV','VEE','VEV','VVE','VVV')
   library(mclust)
+  cat ('\nMclust ')
 	startTime=proc.time()[3]
 	mclBIC=mclustBIC(t(QCFeats),G=G,modelNames=modelNames)
 	endTime=proc.time()[3]
@@ -67,6 +68,8 @@ clust=function(QCInjs,QCFeats,modelNames=c('VVE'),G=seq(1,52,by=3),report=FALSE)
 		plot(mclBIC)
 		dev.off()
 	}
+	cat('\nMClust final model with',MC$G,'clusters and',MC$modelName,'geometry.')
+	cat('\nBIC performed in',BICtime,'seconds and clustering in',sumTime,'seconds.\n')
 	return(list(QCInjs=QCInjs,QCFeats=QCFeats,BIC=mclBIC,clust=MC,BICTime=BICtime,clustTime=sumTime))
 }
 
@@ -162,6 +165,7 @@ driftCalc=function(QCClust,smoothFunc=c('spline','loess'),spar=0.2,report=FALSE)
 	QCClust$deltaDist=deltaDist
 	QCClust$varClust=varClust
 	QCDriftCalc=QCClust
+	cat('\nCalculation of QC drift profiles performed.\n')
 	return(QCDriftCalc)
 }
 
@@ -275,6 +279,9 @@ driftCorr=function(QCDriftCalc,refList=NULL,refType=c('none','one','many'),CorrO
 	# QCDriftCalc$TestFeatsClean=
 	QCDriftCalc$TestFeatsCorr=corrTest
 	QCCorr=QCDriftCalc
+	cat('\nDrift correction of',sum(QCCorr$actionInfo$action!='None'),'out of',QCCorr$clust$G,'clusters ')
+	if (refType=='none') cat('using QC samples only.') else cat('validated by external reference samples.')
+	cat('\nCorrected peak table in $TestFeatsCorr\n')
 	return(QCCorr)
 }
 
@@ -370,20 +377,11 @@ cleanVar=function(QCCorr,CVlimit=.2,report=FALSE) {
 #'
 #' @return A drift corrected object with QC features CV<limit containing final peak table
 #' @export
-driftWrap=function(QCObject, modelNames=c('VVE'), G=seq(1,40,by=3), BatchObject, RefObject=NULL, CVlimit=0.3, report=FALSE) {
+driftWrap=function(QCObject, modelNames=NULL, G=seq(1,40,by=3), BatchObject, RefObject=NULL, CVlimit=0.3, report=FALSE) {
   if (missing(RefObject)) refType='none' else refType='one'
-  cat ('\nMclust ')
 	driftList=clust(QCObject$inj,QCObject$Feats,modelNames=modelNames, G=G, report=report)
-	cat('\nMClust final model with',driftList$clust$G,'clusters and',driftList$clust$modelName,'geometry.')
-  cat('\nBIC performed in',driftList$BICTime,'seconds and clustering in',driftList$clustTime,'seconds.')
 	driftList=driftCalc(driftList,report=report)
-	cat('\nCalculation of QC drift profiles performed.')
 	driftList=driftCorr(driftList,refList=RefObject,refType=refType,CorrObj=BatchObject,report=report)
-	cat('\nDrift correction of',sum(driftList$actionInfo$action!='None'),'out of',driftList$clust$G,'clusters ')
-	if (refType=='none') cat('using QC samples only.') else cat('validated by external reference samples.')
-	cat('\nCorrected peak table in $TestFeatsFinal')
 	driftList=cleanVar(driftList,CVlimit=CVlimit,report=report)
-	cat('\nFiltering by QC CV <',CVlimit,'->', sum(driftList$actionInfo$nAfter), 'features out of', sum(driftList$actionInfo$nBefore), 'kept in the peak table.')
-	cat('\nFiltered peak table in $TestFeatsFinal, final variables in $finalVars and cluster info in $actionInfo.\n')
 	return(driftList)
 }
