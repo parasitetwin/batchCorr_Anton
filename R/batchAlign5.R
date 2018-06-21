@@ -60,7 +60,7 @@ batchFlag=function(PTnofill,batch,sampleGroup,peakInfo,NAhard=0.8,NAsoft=0.5,qua
   for (b in uniqBatch) {
     for (g in uniqGrp) {
       i=i+1
-      PTsub=PTnofill[batch==b & sampleGroup==g,]
+      PTsub=PTnofill[batch==b & sampleGroup==g,,drop=FALSE]
       NAs=apply(PTsub,2,function(x) sum(is.na(x))/length(x))
       intMean=apply(PTsub,2,function(x) mean(x,na.rm=TRUE))
       flagAll[i,]=ifelse(NAs>=NAhard,1,ifelse(NAs>=NAsoft & intMean<quant,1,0))
