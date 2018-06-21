@@ -440,10 +440,10 @@ batchAlign=function(batchflag,alignindex,peaktable_filled,batch) {
       aveFeat=rowSums(t(colSums(subVect)*t(subFeats)))/sum(subVect)
       for (f2 in 2:length(feats)) {
         vect2=subVect[,f2]
-        dotProd=sum(vectAdd*vect2)
+        dotProd=sum(vectAdd*vect2,na.rm = T)
         vectAdd=vectAdd+vect2
         batchVect2=subBatchVect[,f2]
-        batchDotProd=sum(batchVectAdd*batchVect2)
+        batchDotProd=sum(batchVectAdd*batchVect2,na.rm=T)
         batchVectAdd=batchVectAdd+batchVect2
       }
       if (dotProd==0 & batchDotProd==0) {
