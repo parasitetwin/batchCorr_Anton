@@ -415,12 +415,7 @@ correctDrift <- function(peakTable, injections, sampleGroups, QCID='QC', RefID='
   if (nrow(peakTable)!=length(injections)) stop ('nrow(peakTable) not equal to length(injections)')
   if (is.null(colnames(peakTable))) stop ('All features/variables need to have unique names')
   if (length(sampleGroups)!=length(injections)) stop ('length(sampleGroups) not equal to length(injections)')
-  if(!identical(sort(injections),injections)) {
-    cat('Sorting peakTable, sampleGroups and injections to the order of the injections')
-    peakTable <- peakTable[order(injections),]
-    sampleGroups <- sampleGroups[order(injections)]
-    peakTable <- peakTable[order(injections)]
-  }
+  if(!identical(sort(injections),injections)) stop ('injection sequence is not in order\nPlease resort peakTable, injections and sampleGroups accordingly')
   meta=data.frame(injections,sampleGroups)
   # Prepare QC data
   batchQC=getGroup(peakTable=peakTable, meta=meta, sampleGroup=sampleGroups, select=QCID) # Extract QC info
