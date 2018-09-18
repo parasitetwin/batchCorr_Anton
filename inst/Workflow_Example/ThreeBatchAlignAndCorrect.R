@@ -18,17 +18,11 @@ data('ThreeBatchData')
 ##########################
 ## Perform batch alignment
 # Extract peakinfo (i.e. m/z and rt of features)
-peakIn=peakInfo(PT = PTnofill, sep = '@', start = 3) # column names have 2 leading characters describing LC-MS mode -> start at 3
-# Flag presence/missingness on batch level
-bF=batchFlag(PTnofill = PTnofill, batch = meta$batch, sampleGroup = meta$grp, peakInfo = peakIn)
-# Find possible alignment candidates per sample type
-aIQ=alignIndex(batchflag = bF, grpType='QC', mzdiff=0.002, rtdiff=15, report=T, reportName='splits_aIQ')
-# Plot achieved alignments (not necessary)
-plotAlign(batchflag = bF, alignindex = aIQ, plotType='pdf', reportName='clustPlots_aIQ')
-# Perform alignment -> Peaktable
-bA=batchAlign(batchflag = bF, alignindex = aIQ, peaktable_filled = PTfill, batch = meta$batch)
+peakIn=peakInfo(PT = PTnofill, sep = '@', start = 3) # These column names have 2 leading characters describing LC-MS mode -> start at 3
+# Perform multi-batch alignment
+alignBat <- alignBatches(peakInfo = peakIn, PeakTabNoFill = PTnofill, PeakTabFilled = PTfill, batches = meta$batch, sampleGroups = meta$grp, selectGroup = 'QC')
 # Extract new peak table
-PT=bA$PTalign
+PT=alignBat$PTalign
 dim(PT)
 # [1]    90 11284
 

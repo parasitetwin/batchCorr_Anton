@@ -4,8 +4,8 @@
 \alias{driftCorr}
 \title{DC: Correct for intensity drift per cluster}
 \usage{
-driftCorr(QCDriftCalc, refList = NULL, refType = c("none", "one", "many"),
-  CorrObj = NULL, report = FALSE)
+driftCorr(QCDriftCalc, refList = NULL, refType = c("none", "one",
+  "many"), CorrObj = NULL, report = FALSE)
 }
 \arguments{
 \item{QCDriftCalc}{a DriftCalc object}

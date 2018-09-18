@@ -10,8 +10,10 @@ Install `batchCorr` package from `R console` by:
 
 In addition to functions relevant for within/between batch correction, data is provided to accurately reproduce figures from the original *Brunius et al* paper (see below).
 
-## Workflow
-After installation, a `Workflow_Example` folder is created in the `batchCorr` library (in your R library folder). Within this folder, there is a `workflow.R` script containing code on how the package was used to perform within/between batch correction and reproduce figures from the original *Brunius et al* paper (see below).
+## Tutorial
+An easy-to-follow tutorial on how to use the batchCorr package for within-batch drift correction as well as multi-batch alignment and correction procedures can be found at this repository at [Tutorial/batchCorr_Tutorial.docx] (https://gitlab.com/CarlBrunius/batchCorr/blob/master/Tutorial/batchCorr_Tutorial.docx)
+
+In addition, upon installation of the batchCorr package, a `Workflow_Example` folder is created in the `batchCorr` library (in your R library folder). Within this folder, there are workflow script containing working code on the same issues as the tutorial.
 
 ## Description
 This is a repository containing functions within three areas of batch correction. These algorithms were originally developed 
@@ -49,11 +51,12 @@ Batch normalisation is achieved based on:
 ## Reference
 The development and inner workings of these algorithms are reported in:
 
-*Brunius C, Shi L and Landberg R. Within and between batch correction of LC-MS metabolomics data. Submitted manuscript.*
+*Brunius C, Shi L, Landberg R, 2016. Large-scale untargeted LC-MS metabolomics data correction using between-batch feature alignment and cluster-based within-batch signal intensity drift correction. Metabolomics 12:173, doi: 10.1007/s11306-016-1124-4*
 
 ## Version history
 version | date  | comment
 :-----: | :---: | :------
+0.2.1 | 18-09-18 | Added alignBatches() and correctDrift() wrappers -> easier-to-use interface; Additional work on tutorial.
 0.2.0 | 18-06-07 | Major facelift: Removed xcms dependencies & working only with peaktables/metadata; New getters; New workflow; Embryo for tutorial
 0.1.9 | 17-12-04 | Added makeObject functions and merged refOut with refCorr
 0.1.8 | 17-02-06 | Bugfix `refCorr`: Fixed neg ratios -> FALSE.

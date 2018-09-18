@@ -1,9 +1,8 @@
 library(batchCorr)
 data('OneBatchData')
 # This will load 3 objects:
-# PTfill which is the entire 3-batch dataset without any missing values (after fillPeaks/Imputation)
-# PTnofill which is the 3-batch dataset with missing values (before fillPeaks/Imputation)
-# meta which contains information on batch (B, F or H), sample group (QC or Ref) and inj (number in the injection sequence)
+# B_PT which is the one-batch dataset without any missing values (after fillPeaks/Imputation)
+# B_meta which contains information on batch (B), sample group (QC or Ref) and inj (number in the injection sequence)
 
 ##########################
 # In the data we have QC samples for drift correction and long-term reference samples
