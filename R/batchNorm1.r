@@ -42,7 +42,7 @@ featComb=function(batchFeats,batchLimit) {
 }
 
 
-#' Extract features from multiple batch data
+#' Extract features from multiple batch data (deprecated)
 #'
 #' Extract features present in all batches and combine them into a master peaktable.
 #' @param batchObjs a list with batch objects (from within batch drift correction)
@@ -51,6 +51,7 @@ featComb=function(batchFeats,batchLimit) {
 #' @return a combined, but NOT normalised, peaktable - limited to common features
 #' @export
 batchComb=function(batchObjs,batchLimit,finalFeats) {
+  warning('Still works but deprecated: Use mergeBatches() instead')
   nBatch=length(batchObjs)
   if (missing(batchLimit)) batchLimit=nBatch
   if (missing(finalFeats)) {

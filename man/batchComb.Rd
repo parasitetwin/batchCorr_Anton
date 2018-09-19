@@ -2,7 +2,7 @@
 % Please edit documentation in R/batchNorm1.r
 \name{batchComb}
 \alias{batchComb}
-\title{Extract features from multiple batch data}
+\title{Extract features from multiple batch data (deprecated)}
 \usage{
 batchComb(batchObjs, batchLimit, finalFeats)
 }
