@@ -29,40 +29,20 @@ dim(PT)
 
 ##########################
 ## Perform within-batch intensity drift correction
-
 # Batch B
-# Extract sub-parts of the peak tables and metadata
-batchB=getBatch(peakTable = PT, meta = meta, batch = meta$batch, select = 'B')
-batchBQC=getGroup(peakTable=batchB$peakTable, meta=batchB$meta, sampleGroup=batchB$meta$grp, select='QC')
-batchBRef=getGroup(peakTable=batchB$peakTable, meta=batchB$meta, sampleGroup=batchB$meta$grp, select='Ref')
-# Make QC, Batch and Ref objects used by batchCorr
-BQC=makeQCObject(peakTable = batchBQC$peakTable, inj = batchBQC$meta$inj)
-BBatch=makeBatchObject(peakTable = batchB$peakTable, inj = batchB$meta$inj, QCObject = BQC)
-BRef=makeBatchObject(peakTable = batchBRef$peakTable, inj = batchBRef$meta$inj, QCObject = BQC)
-# Perform batch correction
-BCorr=driftWrap(QCObject = BQC, BatchObject = BBatch, RefObject = BRef)
-
+batchB <- getBatch(peakTable = PT, meta = meta, batch = meta$batch, select = 'B')
+BCorr <- correctDrift(peakTable = batchB$peakTable, injections = batchB$meta$inj, sampleGroups = batchB$meta$grp, QCID = 'QC', G = seq(5,35,by=5), modelNames = c('VVE', 'VEE') )
 # Batch F
-# Extract sub-parts of the peak tables and metadata
-batchF=getBatch(peakTable = PT, meta = meta, batch = meta$batch, select = 'F')
-batchFQC=getGroup(peakTable=batchF$peakTable, meta=batchF$meta, sampleGroup=batchF$meta$grp, select='QC')
-batchFRef=getGroup(peakTable=batchF$peakTable, meta=batchF$meta, sampleGroup=batchF$meta$grp, select='Ref')
-# Make QC, Batch and Ref objects used by batchCorr
-FQC=makeQCObject(peakTable = batchFQC$peakTable, inj = batchFQC$meta$inj)
-FBatch=makeBatchObject(peakTable = batchF$peakTable, inj = batchF$meta$inj, QCObject = FQC)
-FRef=makeBatchObject(peakTable = batchFRef$peakTable, inj = batchFRef$meta$inj, QCObject = FQC)
-# Perform batch correction
-FCorr=driftWrap(QCObject = FQC, BatchObject = FBatch, RefObject = FRef)
-
+batchF <- getBatch(peakTable = PT, meta = meta, batch = meta$batch, select = 'F')
+FCorr <- correctDrift(peakTable = batchF$peakTable, injections = batchF$meta$inj, sampleGroups = batchF$meta$grp, QCID = 'QC', G = seq(5,35,by=5), modelNames = c('VVE', 'VEE') )
 # Batch H
-# Extract sub-parts of the peak tables and metadata
-batchH=getBatch(peakTable = PT, meta = meta, batch = meta$batch, select = 'H')
-batchHQC=getGroup(peakTable=batchH$peakTable, meta=batchH$meta, sampleGroup=batchH$meta$grp, select='QC')
-batchHRef=getGroup(peakTable=batchH$peakTable, meta=batchH$meta, sampleGroup=batchH$meta$grp, select='Ref')
-# Make QC, Batch and Ref objects used by batchCorr
-HQC=makeQCObject(peakTable = batchHQC$peakTable, inj = batchHQC$meta$inj)
-HBatch=makeBatchObject(peakTable = batchH$peakTable, inj = batchH$meta$inj, QCObject = HQC)
-HRef=makeBatchObject(peakTable = batchHRef$peakTable, inj = batchHRef$meta$inj, QCObject = HQC)
-# Perform batch correction
-HCorr=driftWrap(QCObject = HQC, BatchObject = HBatch, RefObject = HRef)
+batchH <- getBatch(peakTable = PT, meta = meta, batch = meta$batch, select = 'H')
+HCorr <- correctDrift(peakTable = batchH$peakTable, injections = batchH$meta$inj, sampleGroups = batchH$meta$grp, QCID = 'QC', G = seq(5,35,by=5),modelNames = c('VVE', 'VEE') )
+
+##########################
+## Perform between-batch normalization
+mergedData <- mergeBatches(list(BCorr,FCorr,HCorr))
+normData <- normalizeBatches(peakTable = mergedData$peakTable, batches = meta$batch, sampleGroup = meta$grp, refGroup = 'Ref', population = 'sample')
+normData <- normalizeBatches(peakTable = mergedData$peakTable, batches = meta$batch, sampleGroup = meta$grp, refGroup = 'Ref', population = 'all')
+PTnorm <- normData$peakTable
 

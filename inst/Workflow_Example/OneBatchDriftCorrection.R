@@ -14,25 +14,11 @@ data('OneBatchData')
 
 ##########################
 # 1. Make drift correction based on QC-samples WITHOUT validation by external reference samples
-batchBQC=getGroup(peakTable=B_PT, meta=B_meta, sampleGroup=B_meta$grp, select='QC')
-# Make QC, Batch and Ref objects used by batchCorr
-BQC=makeQCObject(peakTable = batchBQC$peakTable, inj = batchBQC$meta$inj)
-BBatch=makeBatchObject(peakTable = B_PT, inj = B_meta$inj, QCObject = BQC)
-# Perform batch correction
-# BCorr=driftWrap(QCObject = BQC, BatchObject = BBatch, modelNames = NULL, G = seq(5, 45, by = 10), report = TRUE) # This will take a few minutes...
-BCorr=driftWrap(QCObject = BQC, BatchObject = BBatch, modelNames = 'VVE', G = seq(10, 30, by = 2), report = TRUE)
+B_CorrWithoutRef <- correctDrift(peakTable = B_PT, injections = B_meta$inj, sampleGroups = B_meta$grp, QCID = 'QC', modelNames = c('VVE','VVV'), G = seq(5,25,by=5))
 
 ##########################
 # 2. Make drift correction based on QC-samples WITH validation by external reference samples
-batchBQC=getGroup(peakTable=B_PT, meta=B_meta, sampleGroup=B_meta$grp, select='QC')
-batchBRef=getGroup(peakTable=B_PT, meta=B_meta, sampleGroup=B_meta$grp, select='Ref')
-# Make QC, Batch and Ref objects used by batchCorr
-BQC=makeQCObject(peakTable = batchBQC$peakTable, inj = batchBQC$meta$inj)
-BBatch=makeBatchObject(peakTable = B_PT, inj = B_meta$inj, QCObject = BQC)
-BRef=makeBatchObject(peakTable = batchBRef$peakTable, inj = batchBRef$meta$inj, QCObject = BQC)
-# Perform batch correction
-# BCorr=driftWrap(QCObject = BQC, BatchObject = BBatch, modelNames = NULL, G = seq(5, 45, by = 10), RefObject = BRef, report = TRUE) # This will take a few minutes...
-BCorr=driftWrap(QCObject = BQC, BatchObject = BBatch, modelNames = 'VVE', G = seq(14, 30, by = 2), RefObject = BRef, report = TRUE)
+B_CorrWithRef <- correctDrift(peakTable = B_PT, injections = B_meta$inj, sampleGroups = B_meta$grp, QCID = 'QC', RefID = 'Ref', modelNames = c('VVE','VVV'), G = seq(5,25,by=5))
 
 ##########################
 # From a coding perspective, it's easy to perform correction with validation if reference samples are present
@@ -40,8 +26,3 @@ BCorr=driftWrap(QCObject = BQC, BatchObject = BBatch, modelNames = 'VVE', G = se
 # In fact, when reference samples are available (e.g. platform long-term reference) -
 #      Validation using reference samples should ALWAYS be performed!
 # This reduces the likelihood of introducing bias from "false" correction when random drift is larger than systematic drift
-#
-# A recommendation is to perform an initial drift correction with modelNames=NULL and G=seq(1,51,by=10)
-#      This will giva an indication of which modelNames are relvant to examine in greater detail
-#      Then a subselection of modelNames and G can be selected (e.g. modelNames='VVE', G=20:30)
-
