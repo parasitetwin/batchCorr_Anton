@@ -47,6 +47,7 @@ rmsDist=function(mat) {
 #' @export
 ## Perform clustering
 clust=function(QCInjs,QCFeats,modelNames=c('VVE'),G=seq(1,52,by=3),report=FALSE) {
+  if (length(QCInjs)!=nRow(QCFeats)) stop ('nrow(QCFeats) not equal to length(QCInjs)')
 	# modelNames='VVV'
 	# modelNames=c('VEV','VVV')
 	# modelNames=c('VEE','VEV','VVE','VVV')
@@ -95,6 +96,7 @@ driftCalc=function(QCClust,smoothFunc=c('spline','loess'),spar=0.2,report=FALSE)
 	MC=QCClust$clust
 	QCInjs=QCClust$QCInjs
 	QCFeats=QCClust$QCFeats
+	if (length(QCInjs)!=nRow(QCFeats)) stop ('nrow(QCFeats) not equal to length(QCInjs)')
 	# Extract classes
 		nclass=MC$G # Take out total number of identified clusters/components/groups/classes/whatever you want to call them
 		classes=MC$classification # Take out the classifications for the different variables
@@ -210,6 +212,7 @@ driftCorr=function(QCDriftCalc,refList=NULL,refType=c('none','one','many'),CorrO
   	refClean=refList$Feats[,!colnames(refList$Feats)%in%removeFeats]
 	  injRef=refList$inj
 	  corrRefTemp=corrRef=refClean
+	  if (length(injRef)!=nRow(corrRef)) stop ('nrow(corrRef) not equal to length(injRef)')
 	}
 	if (missing(CorrObj)) {
 	  injTest=injQC
@@ -220,6 +223,7 @@ driftCorr=function(QCDriftCalc,refList=NULL,refType=c('none','one','many'),CorrO
 	  corrTest=CorrObj$Feats
 	  corrTest=corrTest[,!colnames(corrTest)%in%removeFeats]
 	}
+	if (length(injTest)!=nRow(corrTest)) stop ('nrow(corrTest) not equal to length(injTest)')
 	for (i in 1:length(keepClust)) {
 		n=ordDist[i]
 		corFact=corMat[,n] # take out cluster correction factors from "master" matrix

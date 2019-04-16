@@ -6,7 +6,7 @@ Install `devtools` to be able to install packages from GitHub.
 
 Install `batchCorr` package from `R console` by:
 
-`devtools::install_git("https://gitlab.com/CarlBrunius/batchCorr.git")`
+`devtools::install_gitlab("CarlBrunius/batchCorr")`
 
 In addition to functions relevant for within/between batch correction, data is provided to accurately reproduce figures from the original *Brunius et al* paper (see below).
 
