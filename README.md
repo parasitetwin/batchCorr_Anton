@@ -56,6 +56,7 @@ The development and inner workings of these algorithms are reported in:
 ## Version history
 version | date  | comment
 :-----: | :---: | :------
+0.2.2 | 19-11-17 | bug fixes in cv() and histograms
 0.2.1 | 18-09-18 | Added alignBatches() and correctDrift() wrappers -> easier-to-use interface; Additional work on tutorial.
 0.2.0 | 18-06-07 | Major facelift: Removed xcms dependencies & working only with peaktables/metadata; New getters; New workflow; Embryo for tutorial
 0.1.9 | 17-12-04 | Added makeObject functions and merged refOut with refCorr
