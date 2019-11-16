@@ -7,11 +7,11 @@
 ## Simple function for calculating cv per column (ie variable)
 cv=function(mat) {
   if (is.null(dim(mat))) {
-    cv=sd(mat)/mean(mat)
+    cv=abs(sd(mat)/mean(mat))
   } else {
     mean=apply(mat,2,mean)
     sd=apply(mat,2,sd)
-    cv=sd/mean
+    cv=abs(sd/mean)
   }
 	return(cv)
 }
