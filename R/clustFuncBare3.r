@@ -260,11 +260,15 @@ driftCorr=function(QCDriftCalc,refList=NULL,refType=c('none','one','many'),CorrO
 	if (report==TRUE) {
 		pdf(file=paste('Hist_Corrected_',format(Sys.time(),format="%y%m%d_%H%M"),'.pdf',sep=''))
 	  if (!is.null(removeFeats)) {
-	    hist(cv(QCDriftCalc$QCFeatsClean),30,col=rgb(0,0,0,1),main='Cluster correction',xlab='CV (feature)')
+	    cvBefore <- cv(QCDriftCalc$QCFeats)
 	  } else {
-	    hist(cv(QCDriftCalc$QCFeats),30,col=rgb(0,0,0,1),main='Cluster correction',xlab='CV (feature)')
+	    cvBefore <- cv(QCDriftCalc$QCFeats)
 	  }
-		hist(cv(corrQC),20,col=rgb(1,1,1,.5),add=TRUE)
+	  histBefore <- hist(cvBefore,30,plot = F)
+		histAfter <- hist(cv(corrQC),breaks = histBefore$breaks, plot = F)
+		ymax <- max(c(histBefore$counts, histAfter$counts))
+	  hist(cvBefore,breaks = histBefore$breaks, ylim = c(0,ymax), col=rgb(0,0,0,1),main='Cluster correction',xlab='CV (feature)')
+		histAfter <- hist(cv(corrQC), ylim = c(0,ymax), breaks = histBefore$breaks,col=rgb(1,1,1,.5),add=TRUE)
 		legend('topright',legend=c('Clean','Corrected'),fill=c(rgb(0,0,0,1),rgb(1,1,1,0.5)))
 		dev.off()
 	}
@@ -313,11 +317,13 @@ cleanVar=function(QCCorr,CVlimit=.2,report=FALSE) {
 	}
 	QCFeatsCorr=QCCorr$QCFeatsCorr
 	cvIndex=which(cv(QCFeatsCorr)>CVlimit)
-	QCFeatsFinal=QCFeatsCorr[,-cvIndex]
+	finalIndex <- rep(TRUE,ncol(QCFeatsCorr))
+	if (length(cvIndex)>0) finalIndex[cvIndex] <- FALSE
+	QCFeatsFinal=QCFeatsCorr[,finalIndex]
 	if (QCCorr$RefType=='one') {
-	  RefFeatsFinal=QCCorr$RefFeatsCorr[,-cvIndex]
+	  RefFeatsFinal=QCCorr$RefFeatsCorr[,finalIndex]
 	}
-	TestFeatsFinal=QCCorr$TestFeatsCorr[,-cvIndex]
+	TestFeatsFinal=QCCorr$TestFeatsCorr[,finalIndex]
 	finalVars=colnames(QCFeatsFinal)
 	cvFeats=mean(cv(QCFeats))      # 0.2276
 	cvFeatsClean=mean(cv(QCFeatsClean))    # 0.1455
@@ -326,8 +332,11 @@ cleanVar=function(QCCorr,CVlimit=.2,report=FALSE) {
 	QCcvs=data.frame(cvFeats=cvFeats,cvFeatsClean=cvFeatsClean,cvFeatsCorr=cvFeatsCorr,cvFeatsFinal=cvFeatsFinal)
 	if (report==TRUE) {
 		pdf(file=paste('Hist_Final_',format(Sys.time(),format="%y%m%d_%H%M"),'.pdf',sep=''))
-		hist(cv(QCFeatsClean),30,col=rgb(0,0,0,.5),main='Cluster cleanup',xlab='CV (feature)')
-		hist(cv(QCFeatsFinal),5,col=rgb(1,1,1,.8),add=TRUE)
+		histBefore <- hist(cv(QCFeatsClean),30,plot=F)
+		histAfter <- hist(cv(QCFeatsFinal),breaks=histBefore$breaks,plot=F)
+		ymax <- max(c(histBefore$counts, histAfter$counts))
+		histBefore <- hist(cv(QCFeatsClean),breaks=histAfter$breaks, ylim=c(0, ymax), col=rgb(0,0,0,.75),main='Cluster cleanup',xlab='CV (feature)')
+		histAfter <- hist(cv(QCFeatsFinal),breaks=histBefore$breaks, ylim=c(0, ymax),col=rgb(1,1,1,.8),add=TRUE)
 		legend('topright',legend=c('Clean','Final'),fill=c(rgb(0,0,0,1),rgb(1,1,1,0.5)))
 		dev.off()
 	}
