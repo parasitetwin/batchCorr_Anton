@@ -264,11 +264,12 @@ driftCorr=function(QCDriftCalc,refList=NULL,refType=c('none','one','many'),CorrO
 	  } else {
 	    cvBefore <- cv(QCDriftCalc$QCFeats)
 	  }
-	  histBefore <- hist(cvBefore,30,plot = F)
-		histAfter <- hist(cv(corrQC),breaks = histBefore$breaks, plot = F)
+	  histBefore <- hist(cvBefore,30 ,plot = F)
+		histAfter <- hist(cv(corrQC),30, plot = F)
+		if(max(histBefore$breaks)>max(histAfter$breaks)) breaks <- histBefore$breaks else breaks <- histAfter$breaks
 		ymax <- max(c(histBefore$counts, histAfter$counts))
-	  hist(cvBefore,breaks = histBefore$breaks, ylim = c(0,ymax), col=rgb(0,0,0,1),main='Cluster correction',xlab='CV (feature)')
-		histAfter <- hist(cv(corrQC), ylim = c(0,ymax), breaks = histBefore$breaks,col=rgb(1,1,1,.5),add=TRUE)
+	  hist(cvBefore,breaks = breaks, ylim = c(0,ymax), col=rgb(0,0,0,1),main='Cluster correction',xlab='CV (feature)')
+		hist(cv(corrQC), ylim = c(0,ymax), breaks = breaks,col=rgb(1,1,1,.5),add=TRUE)
 		legend('topright',legend=c('Clean','Corrected'),fill=c(rgb(0,0,0,1),rgb(1,1,1,0.5)))
 		dev.off()
 	}
@@ -333,10 +334,11 @@ cleanVar=function(QCCorr,CVlimit=.2,report=FALSE) {
 	if (report==TRUE) {
 		pdf(file=paste('Hist_Final_',format(Sys.time(),format="%y%m%d_%H%M"),'.pdf',sep=''))
 		histBefore <- hist(cv(QCFeatsClean),30,plot=F)
-		histAfter <- hist(cv(QCFeatsFinal),breaks=histBefore$breaks,plot=F)
+		histAfter <- hist(cv(QCFeatsFinal),30,plot=F)
+		if(max(histBefore$breaks)>max(histAfter$breaks)) breaks <- histBefore$breaks else breaks <- histAfter$breaks
 		ymax <- max(c(histBefore$counts, histAfter$counts))
-		histBefore <- hist(cv(QCFeatsClean),breaks=histAfter$breaks, ylim=c(0, ymax), col=rgb(0,0,0,.75),main='Cluster cleanup',xlab='CV (feature)')
-		histAfter <- hist(cv(QCFeatsFinal),breaks=histBefore$breaks, ylim=c(0, ymax),col=rgb(1,1,1,.8),add=TRUE)
+		hist(cv(QCFeatsClean),breaks=breaks, ylim=c(0, ymax), col=rgb(0,0,0,.75),main='Cluster cleanup',xlab='CV (feature)')
+		hist(cv(QCFeatsFinal),breaks=breaks, ylim=c(0, ymax),col=rgb(1,1,1,.8),add=TRUE)
 		legend('topright',legend=c('Clean','Final'),fill=c(rgb(0,0,0,1),rgb(1,1,1,0.5)))
 		dev.off()
 	}
