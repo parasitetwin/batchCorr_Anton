@@ -4,8 +4,15 @@
 \alias{plotAlign}
 \title{BA: Plot clusters of aligned features}
 \usage{
-plotAlign(batchflag, alignindex, clust, plotType = c("plot", "pdf",
-  "png"), reportName = "clustPlot", mzwidth = 0.02, rtwidth = 100)
+plotAlign(
+  batchflag,
+  alignindex,
+  clust,
+  plotType = c("plot", "pdf", "png"),
+  reportName = "clustPlot",
+  mzwidth = 0.02,
+  rtwidth = 100
+)
 }
 \arguments{
 \item{batchflag}{a table of presentness/missingness per batch x sample type for the features within cluster}

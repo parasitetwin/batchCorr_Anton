@@ -4,10 +4,17 @@
 \alias{correctDrift}
 \title{Within-batch signal intensity drift correction}
 \usage{
-correctDrift(peakTable, injections, sampleGroups, QCID = "QC",
-  RefID = "none", modelNames = c("VVV", "VVE", "VEV", "VEE", "VEI",
-  "VVI", "VII"), G = seq(5, 35, by = 10), CVlimit = 0.3,
-  report = TRUE)
+correctDrift(
+  peakTable,
+  injections,
+  sampleGroups,
+  QCID = "QC",
+  RefID = "none",
+  modelNames = c("VVV", "VVE", "VEV", "VEE", "VEI", "VVI", "VII"),
+  G = seq(5, 35, by = 10),
+  CVlimit = 0.3,
+  report = TRUE
+)
 }
 \arguments{
 \item{peakTable}{Batch peak table}

@@ -4,8 +4,13 @@
 \alias{clust}
 \title{DC: Cluster features}
 \usage{
-clust(QCInjs, QCFeats, modelNames = c("VVE"), G = seq(1, 52, by = 3),
-  report = FALSE)
+clust(
+  QCInjs,
+  QCFeats,
+  modelNames = c("VVE"),
+  G = seq(1, 52, by = 3),
+  report = FALSE
+)
 }
 \arguments{
 \item{QCInjs}{vectors with QC injections in sequence}

@@ -4,8 +4,15 @@
 \alias{plotClust}
 \title{BA: Plot the identified clusters}
 \usage{
-plotClust(batchflag, grpFlag, cluster, text, color = 2, mzwidth = 0.02,
-  rtwidth = 100)
+plotClust(
+  batchflag,
+  grpFlag,
+  cluster,
+  text,
+  color = 2,
+  mzwidth = 0.02,
+  rtwidth = 100
+)
 }
 \arguments{
 \item{batchflag}{a table of presentness/missingness per batch x sample type for the features within cluster}

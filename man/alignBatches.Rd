@@ -4,8 +4,17 @@
 \alias{alignBatches}
 \title{Perform multi-batch alignment to merge features artificially split between batches}
 \usage{
-alignBatches(peakInfo, PeakTabNoFill, PeakTabFilled, batches, sampleGroups,
-  selectGroup, mzdiff = 0.002, rtdiff = 15, report = TRUE)
+alignBatches(
+  peakInfo,
+  PeakTabNoFill,
+  PeakTabFilled,
+  batches,
+  sampleGroups,
+  selectGroup,
+  mzdiff = 0.002,
+  rtdiff = 15,
+  report = TRUE
+)
 }
 \arguments{
 \item{peakInfo}{matrix with mz and rt in columns 1:2 (see e.g. ?peakInfo)}

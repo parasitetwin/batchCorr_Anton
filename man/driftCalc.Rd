@@ -4,8 +4,12 @@
 \alias{driftCalc}
 \title{DC: Calculate intensity drift per cluster}
 \usage{
-driftCalc(QCClust, smoothFunc = c("spline", "loess"), spar = 0.2,
-  report = FALSE)
+driftCalc(
+  QCClust,
+  smoothFunc = c("spline", "loess"),
+  spar = 0.2,
+  report = FALSE
+)
 }
 \arguments{
 \item{QCClust}{a clust object}

@@ -4,9 +4,15 @@
 \alias{alignIndex}
 \title{BA: Find alignment candidates}
 \usage{
-alignIndex(batchflag, flagType = c("Hard", "Soft", "All"),
-  grpType = "QC", mzdiff = 0.005, rtdiff = 10, report = TRUE,
-  reportName = "splits")
+alignIndex(
+  batchflag,
+  flagType = c("Hard", "Soft", "All"),
+  grpType = "QC",
+  mzdiff = 0.005,
+  rtdiff = 10,
+  report = TRUE,
+  reportName = "splits"
+)
 }
 \arguments{
 \item{batchflag}{a table of presentness/missingness per batch x sample type for the features within cluster}

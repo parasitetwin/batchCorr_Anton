@@ -4,8 +4,16 @@
 \alias{normalizeBatches}
 \title{Between-batch normalisation}
 \usage{
-normalizeBatches(peakTable, batches, sampleGroup, refGroup = "QC",
-  population = "all", CVlimit = 0.3, FCLimit = 5)
+normalizeBatches(
+  peakTable,
+  batches,
+  sampleGroup,
+  refGroup = "QC",
+  population = "all",
+  CVlimit = 0.3,
+  FCLimit = 5,
+  medianZero = c("mean", "min")
+)
 }
 \arguments{
 \item{peakTable}{Multi-batch peak table (samples in rows; features in columns)}
@@ -21,6 +29,8 @@ normalizeBatches(peakTable, batches, sampleGroup, refGroup = "QC",
 \item{CVlimit}{CV criterion to pass for Ref samples per batch (defaults to 0.3)}
 
 \item{FCLimit}{Fold-change criterion for intensity (in relation to average intensity FC between batches; defaults to 5)}
+
+\item{medianZero}{Strategy for substituting median value for population normalization when median is zero (-> Inf). Either 'mean' or 'min' (i.e. lowest non-zero value; default)}
 }
 \value{
 An list object containing:

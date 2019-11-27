@@ -4,8 +4,15 @@
 \alias{batchFlag}
 \title{BA: Aggregate presense/missingness per batch}
 \usage{
-batchFlag(PTnofill, batch, sampleGroup, peakInfo, NAhard = 0.8,
-  NAsoft = 0.5, quantileSoft = 0.1)
+batchFlag(
+  PTnofill,
+  batch,
+  sampleGroup,
+  peakInfo,
+  NAhard = 0.8,
+  NAsoft = 0.5,
+  quantileSoft = 0.1
+)
 }
 \arguments{
 \item{PTnofill}{a peaktable with missing values (ie without either hard filling or imputation)}

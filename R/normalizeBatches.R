@@ -10,12 +10,14 @@
 #' @param population Identifier of population samples in sampleGroups (all (default) or any type of samples present in sampleGroups)
 #' @param CVlimit  CV criterion to pass for Ref samples per batch (defaults to 0.3)
 #' @param FCLimit Fold-change criterion for intensity (in relation to average intensity FC between batches; defaults to 5)
+#' @param medianZero Strategy for substituting median value for population normalization when median is zero (-> Inf). Either 'mean' or 'min' (i.e. lowest non-zero value; default)
 #'
 #' @return An list object containing:
 #' @return peakTable: Normalised multi-batch peak table
 #' @return refCorrected: Boolean matrix with info on which batches were normalised by reference samples; others were normalized by population medians
 #' @export
-normalizeBatches <- function(peakTable, batches, sampleGroup, refGroup='QC', population='all', CVlimit=0.3, FCLimit = 5){
+normalizeBatches <- function(peakTable, batches, sampleGroup, refGroup='QC', population='all', CVlimit=0.3, FCLimit = 5, medianZero = c('mean', 'min')){
+  if (missing(medianZero)) medianZero <- 'min'
   if (population=='all') popSample <- rep(TRUE,nrow(peakTable)) else {
     if (!population%in%sampleGroup) (stop('population identifier needs to be present in sampleGroups\nConsider setting population="all"')) else {
       popSample <- sampleGroup==population
@@ -81,7 +83,16 @@ normalizeBatches <- function(peakTable, batches, sampleGroup, refGroup='QC', pop
       refCorrMedian=median(refCorrected) # Extract their median value
       WhichPOPCorr=which(!refCorrFlags) # Which batches to correct by population median instead
       for (n in WhichPOPCorr) {
-        correctionFactor=refCorrMedian/median(peakTableNormalized[batches == uniqBatch[n] & popSample, feat]) # Calculate correction factor for "population" samples
+        populationMedian <- median(peakTableNormalized[batches == uniqBatch[n] & popSample, feat])
+        if (populationMedian==0) {
+          if (medianZero=='min') {
+            populationMedian <- peakTableNormalized[batches == uniqBatch[n] & popSample, feat]
+            populationMedian <- min(populationMedian[populationMedian!=0])
+          } else if (medianZero=='mean') {
+            populationMedian <- mean(peakTableNormalized[batches == uniqBatch[n] & popSample, feat])
+          } else stop('Other options not included at present.')
+        }
+        correctionFactor=refCorrMedian/populationMedian # Calculate correction factor for "population" samples
         peakTableNormalized[batches == uniqBatch[n], feat] = peakTableNormalized[batches == uniqBatch[n], feat] * correctionFactor
       }
     }
