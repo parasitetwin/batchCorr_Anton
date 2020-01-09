@@ -8,7 +8,8 @@
 #' @param qualRatio Proportion of
 #'
 #' @return A list object containing
-#' @return `peakTable` A merged peak table
+#' @return `peakTableOrg` A merged peak table of original data
+#' @return `peakTableCorr` A merged peak table of drift-corrected data
 #' @return `batch` Batch identifier (per sample)
 #' @return `injection` Injection number (per sample)
 #' @export
@@ -29,20 +30,23 @@ mergeBatches <- function(batchList, qualRatio=0.5) {
   nSamp <- numeric(nBatch)
   injections <- list()
   qualFeatures <- list()
-  peakTables <- list()
+  peakTablesOrg <- peakTablesCorr <- list()
   # Extract relevant data from corr objects
   for (batch in 1:nBatch) {
     nSamp[batch] <- length(batchList[[batch]]$TestInjs)
     injections[[batch]] <- batchList[[batch]]$TestInjs
     qualFeatures[[batch]] <- batchList[[batch]]$finalVars
-    peakTables[[batch]] <- batchList[[batch]]$TestFeatsCorr
+    peakTablesOrg[[batch]] <- batchList[[batch]]$TestFeats
+    peakTablesCorr[[batch]] <- batchList[[batch]]$TestFeatsCorr
   }
   # Aggregate data
   injections <- do.call(c,injections)
   batches <- rep(batchNames,nSamp)
   qualFeatures <- do.call(c,qualFeatures)
   qualFeatures <- names(which(table(qualFeatures)>=nQual))
-  peakTables <- do.call(rbind,peakTables)
-  peakTables <- peakTables[,colnames(peakTables)%in%qualFeatures]
-  return(list(peakTable=peakTables, batch=batches, injection=injections))
+  peakTablesOrg <- do.call(rbind,peakTablesOrg)
+  peakTablesOrg <- peakTablesOrg[,colnames(peakTablesOrg)%in%qualFeatures]
+  peakTablesCorr <- do.call(rbind,peakTablesCorr)
+  peakTablesCorr <- peakTablesCorr[,colnames(peakTablesCorr)%in%qualFeatures]
+  return(list(peakTableOrg=peakTablesOrg, peakTableCorr=peakTablesCorr, batch=batches, injection=injections))
 }

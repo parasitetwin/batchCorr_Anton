@@ -3,7 +3,8 @@
 #' Batches are feature-wise normalised by Ref samples if passing heuristic criteria (CV and fold change).
 #' Otherwise normalized by population median (still per feature).
 #'
-#' @param peakTable Multi-batch peak table (samples in rows; features in columns)
+#' @param peakTableCorr Multi-batch drift-corrected peak table (samples in rows; features in columns)
+#' @param peakTableOrg Multi-batch original peak table (samples in rows; features in columns)
 #' @param batches Vector (length=nrow(PeakTab)) of batch identifiers
 #' @param sampleGroup Vector (length=nrow(PeakTab)) of sample type (e.g. "sample", "QC", "Ref)
 #' @param refGroup Identifier of reference samples in sampleGroups (defaults to "QC")
@@ -16,28 +17,30 @@
 #' @return peakTable: Normalised multi-batch peak table
 #' @return refCorrected: Boolean matrix with info on which batches were normalised by reference samples; others were normalized by population medians
 #' @export
-normalizeBatches <- function(peakTable, batches, sampleGroup, refGroup='QC', population='all', CVlimit=0.3, FCLimit = 5, medianZero = c('mean', 'min')){
+normalizeBatches <- function(peakTableCorr, peakTableOrg, batches, sampleGroup, refGroup='QC', population='all', CVlimit=0.3, FCLimit = 5, medianZero = c('mean', 'min')){
+  if (missing(peakTableOrg)) peakTableOrg <- peakTableCorr
+  if (!(identical(dim(peakTableCorr), dim(peakTableOrg)) & identical(colnames(peakTableCorr), colnames(peakTableOrg)))) stop('Mismatch between peakTableCorr and peakTableOrg')
   if (missing(medianZero)) medianZero <- 'min'
-  if (population=='all') popSample <- rep(TRUE,nrow(peakTable)) else {
+  if (population=='all') popSample <- rep(TRUE,nrow(peakTableCorr)) else {
     if (!population%in%sampleGroup) (stop('population identifier needs to be present in sampleGroups\nConsider setting population="all"')) else {
       popSample <- sampleGroup==population
     }
   }
   # Extract info and declare/allocate variables
-  peakTableNormalized <- peakTable
+  peakTableNormalized <- peakTableCorr
   uniqBatch <- unique(batches)
   nBatch <- length(uniqBatch)
-  nFeat <- ncol(peakTable)
+  nFeat <- ncol(peakTableCorr)
   CVMatrix=matrix(nrow=nBatch,ncol=nFeat) # Ref sample CVs per batch (row) and feature (col)
   rownames(CVMatrix) <- uniqBatch
-  colnames(CVMatrix) <- colnames(peakTable)
+  colnames(CVMatrix) <- colnames(peakTableCorr)
   RefMeanIntensity <- CVMatrix # Ref sample mean intensity  per batch (row) and feature (col)
   RefNormMatrix <- matrix(FALSE, nrow = nBatch, ncol = nFeat) # Boolean (flag) for which batches (rows) of which features (columns) are normalized by reference samples
   MeanIntensityRatios <- matrix(1, nrow = nBatch, ncol = nBatch) # Mean intensity ratios between batches (all features)
   # Aggregate CV and average intensities for the reference sample type per batch
   for (b in 1:nBatch) {
     batch <- uniqBatch[b]
-    peakTableBatch <- peakTable[batches==batch & sampleGroup==refGroup,]
+    peakTableBatch <- peakTableCorr[batches==batch & sampleGroup==refGroup,]
     CVMatrix[b,]=ifelse(cv(peakTableBatch)<=CVlimit,TRUE,FALSE)  # Criterion for QC feature CV
     RefMeanIntensity[b,]=apply(peakTableBatch,2,mean)
   }
@@ -74,7 +77,7 @@ normalizeBatches <- function(peakTable, batches, sampleGroup, refGroup='QC', pop
     refIntensity = RefMeanIntensity[refBatch, feat] # Ref batch intensity
     for (b in refCorrIndex) { # Correct batches to reference batch intensity
       correctionFactor = refIntensity/RefMeanIntensity[b, feat]
-      peakTableNormalized[batches == uniqBatch[b], feat] = peakTable[batches == uniqBatch[b], feat] * correctionFactor
+      peakTableNormalized[batches == uniqBatch[b], feat] = peakTableCorr[batches == uniqBatch[b], feat] * correctionFactor
     }
     RefNormMatrix[, feat] = refCorrFlags
     # Perform population (median) normalisation for the other batches
@@ -83,17 +86,17 @@ normalizeBatches <- function(peakTable, batches, sampleGroup, refGroup='QC', pop
       refCorrMedian=median(refCorrected) # Extract their median value
       WhichPOPCorr=which(!refCorrFlags) # Which batches to correct by population median instead
       for (n in WhichPOPCorr) {
-        populationMedian <- median(peakTableNormalized[batches == uniqBatch[n] & popSample, feat])
+        populationMedian <- median(peakTableOrg[batches == uniqBatch[n] & popSample, feat])
         if (populationMedian==0) {
           if (medianZero=='min') {
-            populationMedian <- peakTableNormalized[batches == uniqBatch[n] & popSample, feat]
+            populationMedian <- peakTableOrg[batches == uniqBatch[n] & popSample, feat]
             populationMedian <- min(populationMedian[populationMedian!=0])
           } else if (medianZero=='mean') {
-            populationMedian <- mean(peakTableNormalized[batches == uniqBatch[n] & popSample, feat])
+            populationMedian <- mean(peakTableOrg[batches == uniqBatch[n] & popSample, feat])
           } else stop('Other options not included at present.')
         }
         correctionFactor=refCorrMedian/populationMedian # Calculate correction factor for "population" samples
-        peakTableNormalized[batches == uniqBatch[n], feat] = peakTableNormalized[batches == uniqBatch[n], feat] * correctionFactor
+        peakTableNormalized[batches == uniqBatch[n], feat] = peakTableOrg[batches == uniqBatch[n], feat] * correctionFactor
       }
     }
   }

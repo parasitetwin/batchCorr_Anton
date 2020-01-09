@@ -1,7 +1,7 @@
 Package: batchCorr
 Type: Package
 Title: Within And Between Batch Correction Of LC-MS Metabolomics Data
-Version: 0.2.3
+Version: 0.2.4
 Date: 2016-04-12
 Author: Carl Brunius <carl.brunius@chalmers.se>
 Maintainer: Carl Brunius <carl.brunius@chalmers.se>

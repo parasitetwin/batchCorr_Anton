@@ -5,7 +5,8 @@
 \title{Between-batch normalisation}
 \usage{
 normalizeBatches(
-  peakTable,
+  peakTableCorr,
+  peakTableOrg,
   batches,
   sampleGroup,
   refGroup = "QC",
@@ -16,7 +17,9 @@ normalizeBatches(
 )
 }
 \arguments{
-\item{peakTable}{Multi-batch peak table (samples in rows; features in columns)}
+\item{peakTableCorr}{Multi-batch drift-corrected peak table (samples in rows; features in columns)}
+
+\item{peakTableOrg}{Multi-batch original peak table (samples in rows; features in columns)}
 
 \item{batches}{Vector (length=nrow(PeakTab)) of batch identifiers}
 

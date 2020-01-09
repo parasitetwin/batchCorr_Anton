@@ -14,7 +14,9 @@ mergeBatches(batchList, qualRatio = 0.5)
 \value{
 A list object containing
 
-`peakTable` A merged peak table
+`peakTableOrg` A merged peak table of original data
+
+`peakTableCorr` A merged peak table of drift-corrected data
 
 `batch` Batch identifier (per sample)
 
