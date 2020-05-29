@@ -42,7 +42,7 @@ HCorr <- correctDrift(peakTable = batchH$peakTable, injections = batchH$meta$inj
 ##########################
 ## Perform between-batch normalization
 mergedData <- mergeBatches(list(BCorr,FCorr,HCorr))
-normData <- normalizeBatches(peakTable = mergedData$peakTable, batches = meta$batch, sampleGroup = meta$grp, refGroup = 'Ref', population = 'sample')
-normData <- normalizeBatches(peakTable = mergedData$peakTable, batches = meta$batch, sampleGroup = meta$grp, refGroup = 'Ref', population = 'all')
+normData <- normalizeBatches(peakTableCorr = mergedData$peakTableCorr, peakTableOrg = mergedData$peakTableOrg, batches = meta$batch, sampleGroup = meta$grp, refGroup = 'Ref', population = 'all')
+# normData <- normalizeBatches(peakTable = mergedData$peakTable, batches = meta$batch, sampleGroup = meta$grp, refGroup = 'Ref', population = 'all')
 PTnorm <- normData$peakTable
 

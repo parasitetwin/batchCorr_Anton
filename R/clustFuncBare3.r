@@ -264,13 +264,14 @@ driftCorr=function(QCDriftCalc,refList=NULL,refType=c('none','one','many'),CorrO
 	  } else {
 	    cvBefore <- cv(QCDriftCalc$QCFeats)
 	  }
-	  histBefore <- hist(cvBefore,30 ,plot = F)
-		histAfter <- hist(cv(corrQC),30, plot = F)
-		if(max(histBefore$breaks)>max(histAfter$breaks)) breaks <- histBefore$breaks else breaks <- histAfter$breaks
+	  histCombined <- hist(c(cvBefore, cv(corrQC)),30 ,plot = F)
+		breaks <- histCombined$breaks
+	  histBefore <- hist(cvBefore, plot = F, breaks = breaks)
+		histAfter <- hist(cv(corrQC), plot = F, breaks = breaks)
 		ymax <- max(c(histBefore$counts, histAfter$counts))
 	  hist(cvBefore,breaks = breaks, ylim = c(0,ymax), col=rgb(0,0,0,1),main='Cluster correction',xlab='CV (feature)')
 		hist(cv(corrQC), ylim = c(0,ymax), breaks = breaks,col=rgb(1,1,1,.5),add=TRUE)
-		legend('topright',legend=c('Clean','Corrected'),fill=c(rgb(0,0,0,1),rgb(1,1,1,0.5)))
+		legend('topright',legend=c('Clean','Corrected'),fill=c(rgb(0,0,0,1),rgb(1,1,1,0.5)), bty='n')
 		dev.off()
 	}
 	QCDriftCalc$actionInfo$action=clustComm
@@ -333,13 +334,14 @@ cleanVar=function(QCCorr,CVlimit=.2,report=FALSE) {
 	QCcvs=data.frame(cvFeats=cvFeats,cvFeatsClean=cvFeatsClean,cvFeatsCorr=cvFeatsCorr,cvFeatsFinal=cvFeatsFinal)
 	if (report==TRUE) {
 		pdf(file=paste('Hist_Final_',format(Sys.time(),format="%y%m%d_%H%M"),'.pdf',sep=''))
-		histBefore <- hist(cv(QCFeatsClean),30,plot=F)
-		histAfter <- hist(cv(QCFeatsFinal),30,plot=F)
-		if(max(histBefore$breaks)>max(histAfter$breaks)) breaks <- histBefore$breaks else breaks <- histAfter$breaks
+		histCombined <- hist(c(cv(QCFeatsClean), cv(QCFeatsFinal)), 30, plot=F)
+		breaks <- histCombined$breaks
+		histBefore <- hist(cv(QCFeatsClean), breaks = breaks, plot=F)
+		histAfter <- hist(cv(QCFeatsFinal), breaks = breaks, plot=F)
 		ymax <- max(c(histBefore$counts, histAfter$counts))
 		hist(cv(QCFeatsClean),breaks=breaks, ylim=c(0, ymax), col=rgb(0,0,0,.75),main='Cluster cleanup',xlab='CV (feature)')
 		hist(cv(QCFeatsFinal),breaks=breaks, ylim=c(0, ymax),col=rgb(1,1,1,.8),add=TRUE)
-		legend('topright',legend=c('Clean','Final'),fill=c(rgb(0,0,0,1),rgb(1,1,1,0.5)))
+		legend('topright',legend=c('Clean','Final'),fill=c(rgb(0,0,0,1),rgb(1,1,1,0.5)), bty = 'n')
 		dev.off()
 	}
 	if (QCCorr$RefType=='one') {
@@ -395,7 +397,7 @@ driftWrap=function(QCObject, modelNames=NULL, G=seq(1,40,by=3), BatchObject, Ref
   if (is.null(RefObject)) refType='none' else refType='one'
 	driftList=clust(QCObject$inj,QCObject$Feats,modelNames=modelNames, G=G, report=report)
 	driftList=driftCalc(driftList,report=report)
-	driftList=driftCorr(driftList,refList=RefObject,refType=refType,CorrObj=BatchObject,report=report)
+	driftList=driftCorr(QCDriftCalc = driftList,refList=RefObject,refType=refType,CorrObj=BatchObject,report=report)
 	driftList=cleanVar(driftList,CVlimit=CVlimit,report=report)
 	return(driftList)
 }
