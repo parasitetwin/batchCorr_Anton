@@ -56,6 +56,7 @@ The development and inner workings of these algorithms are reported in:
 ## Version history
 version | date  | comment
 :-----: | :---: | :------
+0.2.5 | 20-05-29 | Fixed histograms -> common breaks and nice ymax
 0.2.4 | 20-01-09 | Modified mergeBatches() and normalizeBatches() to use non-drift-corrected data for population normalization
 0.2.3 | 19-11-27 | bug fix normalizeBatches() where medianPOP was zero -> Inf
 0.2.2 | 19-11-17 | bug fixes in cv() and histograms
