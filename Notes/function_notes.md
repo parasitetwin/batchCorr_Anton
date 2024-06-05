@@ -1,4 +1,3 @@
-Put in order!
 
 peakInfo: extract m/z and rt of features
 

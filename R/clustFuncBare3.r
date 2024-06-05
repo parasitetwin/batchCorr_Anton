@@ -44,6 +44,7 @@ rmsDist=function(mat) {
 #' @return clust: summary of the BIC-object (i.e. clustering)
 #' @return BICTime: Time required for the BIC-calculation
 #' @return clustTime: Time required for the clustering
+#' @import mclust
 #' @export
 ## Perform clustering
 clust=function(QCInjs,QCFeats,modelNames=c('VVE'),G=seq(1,52,by=3),report=FALSE) {
@@ -54,7 +55,6 @@ clust=function(QCInjs,QCFeats,modelNames=c('VVE'),G=seq(1,52,by=3),report=FALSE)
 	# modelNames=c('VEE','VVE')
 	# modelNames=c('VII','VEI','VVI','VEE','VEV','VVE','VVV')
 	# modelNames=c('EEE','EEV','EVE','EVV','VEE','VEV','VVE','VVV')
-  library(mclust)
   cat ('\nMclust ')
 	startTime=proc.time()[3]
 	mclBIC=mclustBIC(t(QCFeats),G=G,modelNames=modelNames)
@@ -88,10 +88,12 @@ clust=function(QCInjs,QCFeats,modelNames=c('VVE'),G=seq(1,52,by=3),report=FALSE)
 #' @return corMat
 #' @return deltaDist
 #' @return varClust
+#' @importFrom stats lm loess smooth.spline predict
+#' @importFrom graphics lines matplot par
+#' @import reshape
 #' @export
 ## Calculate drift clusters
 driftCalc=function(QCClust,smoothFunc=c('spline','loess'),spar=0.2,report=FALSE) {
-  library(reshape)
 	if (missing(smoothFunc)) smoothFunc='spline'
 	MC=QCClust$clust
 	QCInjs=QCClust$QCInjs
@@ -160,7 +162,7 @@ driftCalc=function(QCClust,smoothFunc=c('spline','loess'),spar=0.2,report=FALSE)
 		}
 	if (report==TRUE) dev.off() # Close pdf file
 	clustComm=rep('None',nclass)
-	actionInfo=data.frame(number=1:nclass,n=sapply(varClust,length),action=clustComm,CVRaw=cvRaw,CVCorr=cvCorr)
+	actionInfo=data.frame(number=1:nclass,n=vapply(varClust,length, integer(1)),action=clustComm,CVRaw=cvRaw,CVCorr=cvCorr)
 	QCClust$actionInfo=actionInfo
 	QCClust$ratios=ratios
 	QCClust$corMat=corMat
@@ -186,6 +188,8 @@ driftCalc=function(QCClust,smoothFunc=c('spline','loess'),spar=0.2,report=FALSE)
 #' @return refType (indata)
 #' @return drift corrected reference samples
 #' @return drift corrected corr/batch samples
+#' @importFrom graphics hist legend
+#' @importFrom grDevices rgb
 #' @export
 ## Perform drift correction for clusters IF rmsdRef is improved
 driftCorr=function(QCDriftCalc,refList=NULL,refType=c('none','one','many'),CorrObj=NULL,report=FALSE) {
@@ -264,10 +268,10 @@ driftCorr=function(QCDriftCalc,refList=NULL,refType=c('none','one','many'),CorrO
 	  } else {
 	    cvBefore <- cv(QCDriftCalc$QCFeats)
 	  }
-	  histCombined <- hist(c(cvBefore, cv(corrQC)),30 ,plot = F)
+	  histCombined <- hist(c(cvBefore, cv(corrQC)),30 ,plot = FALSE)
 		breaks <- histCombined$breaks
-	  histBefore <- hist(cvBefore, plot = F, breaks = breaks)
-		histAfter <- hist(cv(corrQC), plot = F, breaks = breaks)
+	  histBefore <- hist(cvBefore, plot = FALSE, breaks = breaks)
+		histAfter <- hist(cv(corrQC), plot = FALSE, breaks = breaks)
 		ymax <- max(c(histBefore$counts, histAfter$counts))
 	  hist(cvBefore,breaks = breaks, ylim = c(0,ymax), col=rgb(0,0,0,1),main='Cluster correction',xlab='CV (feature)')
 		hist(cv(corrQC), ylim = c(0,ymax), breaks = breaks,col=rgb(1,1,1,.5),add=TRUE)
@@ -334,10 +338,10 @@ cleanVar=function(QCCorr,CVlimit=.2,report=FALSE) {
 	QCcvs=data.frame(cvFeats=cvFeats,cvFeatsClean=cvFeatsClean,cvFeatsCorr=cvFeatsCorr,cvFeatsFinal=cvFeatsFinal)
 	if (report==TRUE) {
 		pdf(file=paste('Hist_Final_',format(Sys.time(),format="%y%m%d_%H%M"),'.pdf',sep=''))
-		histCombined <- hist(c(cv(QCFeatsClean), cv(QCFeatsFinal)), 30, plot=F)
+		histCombined <- hist(c(cv(QCFeatsClean), cv(QCFeatsFinal)), 30, plot=FALSE)
 		breaks <- histCombined$breaks
-		histBefore <- hist(cv(QCFeatsClean), breaks = breaks, plot=F)
-		histAfter <- hist(cv(QCFeatsFinal), breaks = breaks, plot=F)
+		histBefore <- hist(cv(QCFeatsClean), breaks = breaks, plot=FALSE)
+		histAfter <- hist(cv(QCFeatsFinal), breaks = breaks, plot=FALSE)
 		ymax <- max(c(histBefore$counts, histAfter$counts))
 		hist(cv(QCFeatsClean),breaks=breaks, ylim=c(0, ymax), col=rgb(0,0,0,.75),main='Cluster cleanup',xlab='CV (feature)')
 		hist(cv(QCFeatsFinal),breaks=breaks, ylim=c(0, ymax),col=rgb(1,1,1,.8),add=TRUE)

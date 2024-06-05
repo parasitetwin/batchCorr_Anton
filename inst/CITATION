@@ -1,0 +1,10 @@
+bibentry("Article",
+         title = '{Large-scale untargeted LC-MS metabolomics data correction using between-batch feature alignment and cluster-based within-batch signal intensity drift correction}',
+         author = c(person("Carl", "Brunius"), person("Lin", "Shi"), person("Rikard", "Landberg")),
+         year = 2020,
+         journal = "Metabolites",
+	       volume = "10",
+         number = "135",
+	       url = "https://doi.org/10.3390/metabo10040135",
+         textVersion = paste('Brunius, C.; Shi, L.; Landberg, R. Large-scale untargeted LC-MS metabolomics data correction using between-batch feature alignment and cluster-based within-batch signal intensity drift correction. Metabolomics 2016, 12, 173.'),
+         doi = "10.1007/s11306-016-1124-4")

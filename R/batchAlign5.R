@@ -46,6 +46,7 @@ grabAlign=function(XS,batch,grp) {
 #' @return flagAll: experimental: Use at own risk
 #' @return flagSoft: experimental: Use at own risk
 #' @return flagType: experimental: Use at own risk
+#' @importFrom stats quantile
 #' @export
 batchFlag=function(PTnofill,batch,sampleGroup,peakInfo,NAhard=0.8,NAsoft=0.5,quantileSoft=0.1) {
   quant=quantile(PTnofill,quantileSoft,na.rm=TRUE)
@@ -113,7 +114,7 @@ align=function(flags,mz,rt,mzdiff=0.005,rtdiff=10) {
   if (length(event)==0) {
     return(list())
   }
-  event=matrix(unlist(event),ncol=7,byrow=T)  # Rearrange
+  event=matrix(unlist(event),ncol=7,byrow=TRUE)  # Rearrange
   event=as.data.frame(event)
   colnames(event)=c('event','m','n','dotProd','mSum','nSum','newSum')
   uniqFeat=unique(c(event$m,event$n))
@@ -198,6 +199,7 @@ clusterMatrix=function(features) {
 #' @param mz m/z values of the features
 #' @param rt rt values of the features
 #' @return A vector with subcluster identifiers
+#' @importFrom stats dist
 #' @export
 clustSplit=function(clustFlags,mz,rt) {
   clustList=rep(1,ncol(clustFlags))
@@ -258,6 +260,7 @@ clustSplit=function(clustFlags,mz,rt) {
 #' @param color vector with colors
 #' @param mzwidth plot span of m/z
 #' @param rtwidth plot span of rt
+#' @importFrom graphics points
 #' @export
 plotClust=function(batchflag,grpFlag,cluster,text,color=2,mzwidth=0.02,rtwidth=100) {
   bF=batchflag
@@ -295,6 +298,7 @@ plotClust=function(batchflag,grpFlag,cluster,text,color=2,mzwidth=0.02,rtwidth=1
 #' @return clusters: clusters after splitting overcrowded clusters
 #' @return oldFeatures: features before splitting overcrowded clusters
 #' @return oldClusters: clusters before splitting overcrowded clusters
+#' @importFrom grDevices dev.off pdf png 
 #' @export
 alignIndex=function(batchflag,flagType=c('Hard','Soft','All'),grpType='QC',mzdiff=0.005,rtdiff=10,report=TRUE,reportName='splits') {
   bF=batchflag
@@ -398,7 +402,7 @@ aggregateIndex=function(aI1,aI2) {
   grp2=as.character(aI2$shift$grp)
   grps=rbind(grp1,grp2)
   ## Find conflicts
-  conflict=apply(lists,2,function(x) ifelse(x[1]==x[2],F,ifelse(any(x==0),F,T)))
+  conflict=apply(lists,2,function(x) ifelse(x[1]==x[2],FALSE, ifelse(any(x==0),FALSE, TRUE)))
   confClust=unique(as.numeric(lists[,conflict]))
   lists[lists%in%confClust]=0
   listNew=ifelse(list1==list2,list1,0)
@@ -423,6 +427,7 @@ aggregateIndex=function(aI1,aI2) {
 #' @return boolKeep: boolean vector of features kept after alignment (the rest of the combined features are deleted)
 #' @return boolAveragedFill: boolean vector of features where alignment has been made using feature averaging (i.e. where batches are missing within features). Length: same as orgiginal number of features
 #' @return aI: alignIndex object (indata)
+#' @importFrom stats aggregate
 #' @export
 batchAlign=function(batchflag,alignindex,peaktable_filled,batch) {
   bF=batchflag
@@ -449,10 +454,10 @@ batchAlign=function(batchflag,alignindex,peaktable_filled,batch) {
       aveFeat=rowSums(t(colSums(subVect)*t(subFeats)))/sum(subVect)
       for (f2 in 2:length(feats)) {
         vect2=subVect[,f2]
-        dotProd=sum(vectAdd*vect2,na.rm = T)
+        dotProd=sum(vectAdd*vect2,na.rm = TRUE)
         vectAdd=vectAdd+vect2
         batchVect2=subBatchVect[,f2]
-        batchDotProd=sum(batchVectAdd*batchVect2,na.rm=T)
+        batchDotProd=sum(batchVectAdd*batchVect2,na.rm=TRUE)
         batchVectAdd=batchVectAdd+batchVect2
       }
       if (dotProd==0 & batchDotProd==0) {
@@ -461,7 +466,7 @@ batchAlign=function(batchflag,alignindex,peaktable_filled,batch) {
           bFlag=which(batchFlags[,f]>0)
           for (bFl in bFlag) {
             batchID=uniqBatch[bFl]
-            boolFeat=boolFeat|ifelse(batch==batchID,T,F)
+            boolFeat=boolFeat|ifelse(batch==batchID, TRUE, FALSE)
           }
           newFeat[boolFeat]=PTfill[boolFeat,f]
         }
@@ -472,7 +477,7 @@ batchAlign=function(batchflag,alignindex,peaktable_filled,batch) {
           boolFeat=rep(FALSE,nrow(PTfill))
           for (z in zeros) {
             batchID=uniqBatch[z]
-            boolFeat=boolFeat|ifelse(batch==batchID,T,F)
+            boolFeat=boolFeat|ifelse(batch==batchID,TRUE, FALSE)
           }
           newFeat[boolFeat]=aveFeat[boolFeat]
         }

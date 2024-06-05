@@ -1,8 +1,10 @@
-.Rproj.user
+Meta
+doc
+.Rproject/*
+.Rproj.user/*
 .Rhistory
-.RData
-.Ruserdata
-Exclude/
-.gitignore
-.Rbuildignore
-*.Rproj
+.Rproj.user
+renv/*
+renv.lock
+/doc/
+/Meta/

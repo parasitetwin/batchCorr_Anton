@@ -117,6 +117,7 @@ refOut=function(PT,meta,grpType='R',CVlimit=0.3) {
 #' @return batch Batch identifier
 #' @return grp Sample type identifier
 #' @return grpType Reference sample identifier
+#' @importFrom stats median
 #' @export
 refCorr=function (PT, batch, grp, grpType='R', CVlimit=0.3, FCLimit = 5){
   # Extract info and declare/allocate variables
