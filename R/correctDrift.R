@@ -17,12 +17,26 @@
 #' @export
 #'
 #' @examples
-#' library(batchCorr)
-#' data('OneBatchData') # loads "B_meta" (metadata), "B_PT" (Peak table without missing values)
-#' # Drift correction using QCs -> Approx 2-3 minutes computation
-#' batchBCorr <- correctDrift(peakTable = B_PT, injections = B_meta$inj, sampleGroups = B_meta$grp, QCID = 'QC', modelNames = 'VVE', G = 17:22)
-#' # More unbiased drift correction using QCs & external reference samples -> Approx 2-3 minutes computation
-#' batchBCorr <- correctDrift(peakTable = B_PT, injections = B_meta$inj, sampleGroups = B_meta$grp, QCID = 'QC', RefID='Ref', modelNames = 'VVE', G = 17:22)
+#' data('ThreeBatchData') 
+#' set.seed(2024)
+#' # Get batches
+#' batchB <- getBatch(peakTable = PTfill, meta = meta, 
+#'                    batch = meta$batch, select = 'B')
+#' batchF <- getBatch(peakTable = PTfill, meta = meta, 
+#'                    batch = meta$batch, select = 'F')
+#' # Drift correction using QCs
+#' BCorr <- correctDrift(peakTable = batchB$peakTable, 
+#'                       injections = batchB$meta$inj, 
+#'                       sampleGroups = batchB$meta$grp, QCID = 'QC', 
+#'                       G = seq(5,35,by=3), modelNames = c('VVE', 'VEE'))
+#' # More unbiased drift correction using QCs & external reference samples
+#' FCorr <- correctDrift(peakTable = batchF$peakTable, 
+#'                       injections = batchF$meta$inj,
+#'                       sampleGroups = batchF$meta$grp, QCID = 'QC',
+#'                       RefID='Ref', G = seq(5,35,by=3), 
+#'                       modelNames = c('VVE', 'VEE'))
+#' # Merge batches for batch normalization, for example
+#' mergedData <- mergeBatches(list(BCorr, FCorr))
 correctDrift <- function(peakTable, injections, sampleGroups, QCID='QC', RefID='none', modelNames = c('VVV','VVE','VEV','VEE','VEI','VVI','VII'), G = seq(5,35,by=10) , CVlimit = 0.3, report = TRUE) {
   # Some basic sanity check
   if (nrow(peakTable)!=length(injections)) stop ('nrow(peakTable) not equal to length(injections)')
@@ -31,13 +45,13 @@ correctDrift <- function(peakTable, injections, sampleGroups, QCID='QC', RefID='
   if(!identical(sort(injections),injections)) stop ('injection sequence is not in order\nPlease resort peakTable, injections and sampleGroups accordingly')
   meta=data.frame(injections,sampleGroups)
   # Prepare QC data
-  batchQC=getGroup(peakTable=peakTable, meta=meta, sampleGroup=sampleGroups, select=QCID) # Extract QC info
+  batchQC=.getGroup(peakTable=peakTable, meta=meta, sampleGroup=sampleGroups, select=QCID) # Extract QC info
   QCObject=makeQCObject(peakTable = batchQC$peakTable, inj = batchQC$meta$inj) # Prepare QC object for drift correction
   # Prepare batch data
   BatchObject=makeBatchObject(peakTable = peakTable, inj = injections, QCObject = QCObject) # Prepare batch object for drift correction
   # Prepare external reference data
   if (RefID!="none") {
-    batchRef=getGroup(peakTable=peakTable, meta=meta, sampleGroup=sampleGroups, select=RefID) # Extract Ref info
+    batchRef=.getGroup(peakTable=peakTable, meta=meta, sampleGroup=sampleGroups, select=RefID) # Extract Ref info
     RefObject=makeBatchObject(peakTable = batchRef$peakTable, inj = batchRef$meta$inj, QCObject = QCObject) # Prepare Ref object for drift correction
     Corr=driftWrap(QCObject = QCObject, BatchObject = BatchObject, RefObject = RefObject, modelNames = modelNames, G = G, CVlimit = CVlimit, report = report) # Perform drift correction
   } else {

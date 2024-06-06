@@ -48,10 +48,24 @@ $testFeatsFinal (to extract drift-corrected data which pass the criterion that Q
 Within-batch signal intensity drift correction
 }
 \examples{
-library(batchCorr)
-data('OneBatchData') # loads "B_meta" (metadata), "B_PT" (Peak table without missing values)
-# Drift correction using QCs -> Approx 2-3 minutes computation
-batchBCorr <- correctDrift(peakTable = B_PT, injections = B_meta$inj, sampleGroups = B_meta$grp, QCID = 'QC', modelNames = 'VVE', G = 17:22)
-# More unbiased drift correction using QCs & external reference samples -> Approx 2-3 minutes computation
-batchBCorr <- correctDrift(peakTable = B_PT, injections = B_meta$inj, sampleGroups = B_meta$grp, QCID = 'QC', RefID='Ref', modelNames = 'VVE', G = 17:22)
+data('ThreeBatchData') 
+set.seed(2024)
+# Get batches
+batchB <- getBatch(peakTable = PTfill, meta = meta, 
+                   batch = meta$batch, select = 'B')
+batchF <- getBatch(peakTable = PTfill, meta = meta, 
+                   batch = meta$batch, select = 'F')
+# Drift correction using QCs
+BCorr <- correctDrift(peakTable = batchB$peakTable, 
+                      injections = batchB$meta$inj, 
+                      sampleGroups = batchB$meta$grp, QCID = 'QC', 
+                      G = seq(5,35,by=3), modelNames = c('VVE', 'VEE'))
+# More unbiased drift correction using QCs & external reference samples
+FCorr <- correctDrift(peakTable = batchF$peakTable, 
+                      injections = batchF$meta$inj,
+                      sampleGroups = batchF$meta$grp, QCID = 'QC',
+                      RefID='Ref', G = seq(5,35,by=3), 
+                      modelNames = c('VVE', 'VEE'))
+# Merge batches for batch normalization, for example
+mergedData <- mergeBatches(list(BCorr, FCorr))
 }

@@ -3,7 +3,8 @@
 #' peakTab will extract a peak table from an XCMS object with samples as rows and features as columns. Features are named by 'm/z@rt'
 #' @param XS an XCMS object
 #' @return a peak table with samples as rows and features as columns, features (colnames) named by 'm/z@rt'
-#' @export
+#' @import xcms
+#' @noRd
 peakTab=function(XS) {
   pTab=peakTable(XS)
   id=paste('RP',pTab$mz,'@',pTab$rt,sep='')
@@ -19,7 +20,7 @@ peakTab=function(XS) {
 #' @param batch a batch identifier
 #' @param grp a sample type identifier
 #' @return a peak table with samples as rows and features as columns, features (colnames) named by 'm/z@rt'
-#' @export
+#' @noRd
 grabAlign=function(XS,batch,grp) {
   incl=(XS@phenoData[,1]==batch & XS@phenoData[,2]==grp)
   peakTab=peakTab(XS)
@@ -47,7 +48,7 @@ grabAlign=function(XS,batch,grp) {
 #' @return flagSoft: experimental: Use at own risk
 #' @return flagType: experimental: Use at own risk
 #' @importFrom stats quantile
-#' @export
+#' @noRd
 batchFlag=function(PTnofill,batch,sampleGroup,peakInfo,NAhard=0.8,NAsoft=0.5,quantileSoft=0.1) {
   quant=quantile(PTnofill,quantileSoft,na.rm=TRUE)
   uniqBatch=unique(batch)
@@ -89,7 +90,7 @@ batchFlag=function(PTnofill,batch,sampleGroup,peakInfo,NAhard=0.8,NAsoft=0.5,qua
 #' @return events: all possible alignments
 #' @return features: all features involved in possible alignments
 #' @return clusters: groups of features linked through mutual events
-#' @export
+#' @noRd
 align=function(flags,mz,rt,mzdiff=0.005,rtdiff=10) {
   misIndex=which(colSums(flags)!=nrow(flags) & colSums(flags)!=0) # Take out misalignment candidates
   event=list()
@@ -175,7 +176,7 @@ align=function(flags,mz,rt,mzdiff=0.005,rtdiff=10) {
 #' clusterMatrix will sort features into clusters. Used internally.
 #' @param features all features involved in possible alignments
 #' @return clusters: groups of features linked through mutual events
-#' @export
+#' @noRd
 clusterMatrix=function(features) {
   nClust=length(unique(features$cluster))
   clustMat=matrix(nrow=nClust,ncol=3+length(grep('bF',colnames(features))))
@@ -200,7 +201,7 @@ clusterMatrix=function(features) {
 #' @param rt rt values of the features
 #' @return A vector with subcluster identifiers
 #' @importFrom stats dist
-#' @export
+#' @noRd
 clustSplit=function(clustFlags,mz,rt) {
   clustList=rep(1,ncol(clustFlags))
   dotFlag=matrix(0,ncol=ncol(clustFlags),nrow=ncol(clustFlags))
@@ -261,7 +262,7 @@ clustSplit=function(clustFlags,mz,rt) {
 #' @param mzwidth plot span of m/z
 #' @param rtwidth plot span of rt
 #' @importFrom graphics points
-#' @export
+#' @noRd
 plotClust=function(batchflag,grpFlag,cluster,text,color=2,mzwidth=0.02,rtwidth=100) {
   bF=batchflag
   mzspan=c(mean(cluster$mz)-mzwidth/2,mean(cluster$mz)+mzwidth/2)
@@ -299,7 +300,7 @@ plotClust=function(batchflag,grpFlag,cluster,text,color=2,mzwidth=0.02,rtwidth=1
 #' @return oldFeatures: features before splitting overcrowded clusters
 #' @return oldClusters: clusters before splitting overcrowded clusters
 #' @importFrom grDevices dev.off pdf png 
-#' @export
+#' @noRd
 alignIndex=function(batchflag,flagType=c('Hard','Soft','All'),grpType='QC',mzdiff=0.005,rtdiff=10,report=TRUE,reportName='splits') {
   bF=batchflag
   if (missing(flagType)) flagType='Hard'
@@ -362,7 +363,7 @@ alignIndex=function(batchflag,flagType=c('Hard','Soft','All'),grpType='QC',mzdif
 #' @param reportName name of plotfile
 #' @param mzwidth plot span of m/z
 #' @param rtwidth plot span of rt
-#' @export
+#' @noRd
 plotAlign=function(batchflag,alignindex,clust,plotType=c('plot','pdf','png'),reportName='clustPlot',mzwidth=0.02,rtwidth=100) {
   if (missing(plotType)) plotType='plot'
   aI=alignindex
@@ -393,7 +394,7 @@ plotAlign=function(batchflag,alignindex,clust,plotType=c('plot','pdf','png'),rep
 #' @param aI1 an alignIndex object for sample type 1
 #' @param aI2 an alignIndex object for sample type 2
 #' @return An object (list) with aggregated alignment information
-#' @export
+#' @noRd
 aggregateIndex=function(aI1,aI2) {
   list1=aI1$shift$list
   list2=aI2$shift$list
@@ -428,7 +429,7 @@ aggregateIndex=function(aI1,aI2) {
 #' @return boolAveragedFill: boolean vector of features where alignment has been made using feature averaging (i.e. where batches are missing within features). Length: same as orgiginal number of features
 #' @return aI: alignIndex object (indata)
 #' @importFrom stats aggregate
-#' @export
+#' @noRd
 batchAlign=function(batchflag,alignindex,peaktable_filled,batch) {
   bF=batchflag
   flags=bF$flagHard

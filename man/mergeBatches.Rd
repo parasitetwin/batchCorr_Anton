@@ -29,8 +29,27 @@ The user must specify a minimum proportion of qualified batches per feature, i.e
 There is thus a risk that features with poor quality (in certain batches) are present, but the features are present in high quality in sufficient proportion of batches to anyway warrant inclusion.
 }
 \examples{
-batchList <- list(b1=b1Corr, b2=b2Corr, b3=b3Corr)
-mergeList <- mergeBatches(batchList)
-cbind(mergeList$batch,mergeList$injection)
-dim(mergeList$peakTable)
+\donttest{
+data('ThreeBatchData') 
+set.seed(2024)
+# Get batches
+batchB <- getBatch(peakTable = PTfill, meta = meta, 
+                   batch = meta$batch, select = 'B')
+batchF <- getBatch(peakTable = PTfill, meta = meta, 
+                   batch = meta$batch, select = 'F')
+# Drift correction using QCs
+BCorr <- correctDrift(peakTable = batchB$peakTable, 
+                      injections = batchB$meta$inj, 
+                      sampleGroups = batchB$meta$grp, QCID = 'QC', 
+                      G = seq(5,35,by=3), modelNames = c('VVE', 'VEE'))
+# More unbiased drift correction using QCs & external reference samples
+FCorr <- correctDrift(peakTable = batchF$peakTable, 
+                      injections = batchF$meta$inj,
+                      sampleGroups = batchF$meta$grp, QCID = 'QC',
+                      RefID='Ref', G = seq(5,35,by=3), 
+                      modelNames = c('VVE', 'VEE'))
+# Merge batches for batch normalization, for example
+mergedData <- mergeBatches(list(BCorr, FCorr))
+}
+
 }

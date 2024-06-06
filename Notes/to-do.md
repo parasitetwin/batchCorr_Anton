@@ -4,11 +4,6 @@
 R CMD check error: no test files
 - Write unit tests, primarily for exported functions
 
-R CMD check error: running examples failed
-BiocCheck::BiocCheck error: At least 80% of man pages documenting exported objects must have runnable examples.
-- Make, check and/or fix examples for exported functions; at least the makeBatchObject and makeQCObject examples are not working
-- you can skip examples for functions we de-export and add a @noRd tag instead
-
 R CMD check warning:
 Undocumented code objects:
   ‘B_PT’ ‘B_meta’ ‘PTfill’ ‘PTnofill’ ‘meta’
@@ -24,10 +19,10 @@ R CMD check note: installed size is 15.9 mb. Subdirectories of 1mb or more: data
 BiocCheck::BiocCheck warning: Data files exceed the 5MB size limit
 - One may possibly remove onebatch data, but it's still like 12.7 mb, any suggestions Carl?
 
-BiocCheck::BiocCheck error: Unable to find your email in the Support Site (Carl's?)
+BiocCheck::BiocCheck error: Unable to find your email in the Support Site (Anton)
 
 BiocCheck::BiocCheck note: Cannot determine whether maintainer is subscribed to the Bioc-Devel mailing list (requires admin credentials). Subscribe here: https://stat.ethz.ch/mailman/listinfo/bioc-devel
-- Carl? Maybe Vilhelm should be maintainer first to take it through the submission process?
+- Anton? 
 
 BiocCheck::BiocCheck note: The recommended function length is 50 lines or less. There are 8 functions greater than 50 lines.
 The longest 5 functions are:
@@ -63,6 +58,8 @@ BiocCheck::BiocCheck note:
 Consider shorter lines; 250 lines (15%) are > 80 characters long.
 BiocCheck::BiocCheck note:
 Consider 4 spaces instead of tabs; 276 lines (17%) contain tabs.
+
+After Vilhelm, in the vignette, removed the mentions of the low-level functions as they are no longer exported, it might be good if Carl read through it and made sure it's good!
 
 
 

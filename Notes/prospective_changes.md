@@ -9,18 +9,14 @@ Or decide to include the helpers of the main functions. But that's it.
 
 It is quite possible that the Bioconductor reviewers want to rewrite the package in terms of the data structures and other infrastructure. Do or do not prepare for this in advance?
 
-There are two makeBatchObject.Rds for some reason.
-
 Is there hierarchical clustering in mclust?
 
 It could be helpful if Carl or I did a round of commenting the code.
-
-Write input checks, errors, warnings etc.
-
-There's something up with the conceptualization of the code as so many variables are declared. I think it's because of the use of lists which doesn't support smooth extraction of variables.
 
 The for-loop in normalizeBatches could be modified such that the part identifying candidates for reference sample normalization could be outside the loop
 
 It may be a good idea to SummarizedExperimentize the package, but meibi later? I could do a round of SummarizedExperimenting at the same time as notame is translated to SummarizedExperimentized.
 
-Reminder: Implement multiple reference samples? 
+Reminder: Implement multiple types of reference samples in driftCorr? 
+
+Reminder: Do we want to keep experimental arguments: NAsoft, quantileSoft, flagAll, flagSoft, flagType?

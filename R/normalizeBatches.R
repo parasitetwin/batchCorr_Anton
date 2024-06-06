@@ -16,6 +16,13 @@
 #' @return An list object containing:
 #' @return peakTable: Normalised multi-batch peak table
 #' @return refCorrected: Boolean matrix with info on which batches were normalised by reference samples; others were normalized by population medians
+#' @examples
+#' # Note that the example data does not include any biological samples, in
+#' # which case population = "sample" does not work
+#' data("ThreeBatchData")
+#' normData <- normalizeBatches(peakTableCorr = PTfill, batches = meta$batch,
+#'                              sampleGroup = meta$grp, refGroup = "Ref",
+#'                              population = "all")
 #' @export
 normalizeBatches <- function(peakTableCorr, peakTableOrg, batches, sampleGroup, refGroup='QC', population='all', CVlimit=0.3, FCLimit = 5, medianZero = c('mean', 'min')){
   if (missing(peakTableOrg)) peakTableOrg <- peakTableCorr

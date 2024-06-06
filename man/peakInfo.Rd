@@ -21,3 +21,10 @@ a matrix with m/z and rt of features as columns
 \description{
 Extract features from peak table and report their m/z and rt values
 }
+\examples{
+data('ThreeBatchData')
+# Extract peakinfo (i.e. m/z and rt of features). These column names have 2
+# leading characters describing LC-MS mode -> start at 3
+peakIn <- peakInfo(PT = PTnofill, sep = '@', start = 3)
+
+}

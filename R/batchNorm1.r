@@ -6,8 +6,14 @@
 #' @param sep character separating mz from rt, e.g. "_"
 #' @param start character from which to start the read of peakInfo (from PT colnames)
 #' @param timepos Which position carries info about rt (1 for before separator; 2 for after separator)
-#'
 #' @return a matrix with m/z and rt of features as columns
+#'
+#' @examples
+#' data('ThreeBatchData')
+#' # Extract peakinfo (i.e. m/z and rt of features). These column names have 2
+#' # leading characters describing LC-MS mode -> start at 3
+#' peakIn <- peakInfo(PT = PTnofill, sep = '@', start = 3)
+#'
 #' @export
 peakInfo=function(PT,sep='_',timepos=2,start=1) {
   peakInfo=matrix(unlist(strsplit(colnames(PT),sep)),ncol=2,byrow=TRUE)
@@ -25,7 +31,7 @@ peakInfo=function(PT,sep='_',timepos=2,start=1) {
 #' @param batchFeats list with feature names per batch
 #' @param batchLimit lower limit of number of batches in which the feature needs to be present to be included in the final list (defaults to length of `batchFeats` list)
 #' @return a vector with the features present in at least `batchLimit` batches
-#' @export
+#' @noRd
 featComb=function(batchFeats,batchLimit) {
   nBatch=length(batchFeats)
   if (missing(batchLimit)) batchLimit=nBatch
@@ -49,7 +55,7 @@ featComb=function(batchFeats,batchLimit) {
 #' @param batchLimit lower limit of number of batches in which the feature needs to be present to be included in the final list (defaults to length of `batchFeats` list)
 #' @param finalVars a vector with the features to bring out from batch PTs. NB! All features need be present in all batches (defaults to all features present in all batches)
 #' @return a combined, but NOT normalised, peaktable - limited to common features
-#' @export
+#' @noRd
 batchComb=function(batchObjs,batchLimit,finalFeats) {
   warning('Still works but deprecated: Use mergeBatches() instead')
   nBatch=length(batchObjs)
@@ -78,7 +84,7 @@ batchComb=function(batchObjs,batchLimit,finalFeats) {
 #' @return an object containing:
 #' @return CV: boolean per batch & feature in CV<limit
 #' @return aveInt: average reference intensity per batch & feature
-#' @export
+#' @noRd
 refOut=function(PT,meta,grpType='R',CVlimit=0.3) {
   warning('Still works but deprecated: Functionality merged with refCorr')
   batch=meta[,1]
@@ -118,7 +124,7 @@ refOut=function(PT,meta,grpType='R',CVlimit=0.3) {
 #' @return grp Sample type identifier
 #' @return grpType Reference sample identifier
 #' @importFrom stats median
-#' @export
+#' @noRd
 refCorr=function (PT, batch, grp, grpType='R', CVlimit=0.3, FCLimit = 5){
   # Extract info and declare/allocate variables
   PTcorr = PT

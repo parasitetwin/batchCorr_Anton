@@ -5,9 +5,9 @@
 #' @param QCObject QC Object (to check injection sequence compatibility)
 #'
 #' @return Batch Object
-#' @export
 #'
 #' @examples BatchObject=makeBatchObject(BatchPeakTable, BatchInjections, QCObject)
+#' @noRd
 makeBatchObject=function (peakTable, inj, QCObject)
 {
   if(length(inj)!=nrow(peakTable)) stop ('mismatch number of samples in peak table and injection sequence')

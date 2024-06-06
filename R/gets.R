@@ -8,11 +8,16 @@
 #' @return list object
 #' @return $peakTable: Single batch peak table
 #' @return $meta: Single batch metadata
-#' @export
 #'
 #' @examples
-#' data(ThreeBatchData)
-#' batchB=getBatch(peakTable=PTfill, meta=meta, batch=meta$batch, select='B')
+#' data('ThreeBatchData') 
+#' # Get batches for drift correction
+#' batchB <- getBatch(peakTable = PTfill, meta = meta, 
+#'                    batch = meta$batch, select = 'B')
+#' batchF <- getBatch(peakTable = PTfill, meta = meta, 
+#'                    batch = meta$batch, select = 'F')
+#'
+#' @export
 getBatch=function(peakTable,meta,batch,select) {
   peakTable=peakTable[batch==select,]
   if(is.null(dim(meta))) meta=matrix(meta,ncol = 1)
@@ -31,13 +36,14 @@ getBatch=function(peakTable,meta,batch,select) {
 #' @return list object
 #' @return $peakTable: Sample group peak table
 #' @return $meta: Sample group metadata
-#' @export
+#' @noRd
 #'
 #' @examples
 #' data(ThreeBatchData)
 #' batchB=getBatch(peakTable=PTfill, meta=meta, batch=meta$batch, select='B')
-#' batchBQC=getGroup(peakTable=batchB$peakTable, meta=batchB$meta, sampleGroup=batchB$Meta$grp, select='QC')
-getGroup=function(peakTable,meta,sampleGroup,select) {
+#' batchBQC=.getGroup(peakTable=batchB$peakTable, meta=batchB$meta, sampleGroup=batchB$Meta$grp, select='QC')
+#' @noRd
+.getGroup=function(peakTable,meta,sampleGroup,select) {
   whichIncl=grep(select,sampleGroup)
   peakTable=peakTable[whichIncl,]
   if(is.null(dim(meta))) meta=matrix(meta,ncol = 1)

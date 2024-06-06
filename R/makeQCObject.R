@@ -4,13 +4,14 @@
 #' @param inj Injection sequence number for QC samples
 #'
 #' @return QC object
-#' @export
 #'
 #' @examples QCObject=makeQCObject(QCPeakTable, QCInjections)
+#'
+#' @noRd
 makeQCObject=function (peakTable, inj)
 {
   if(length(inj)!=nrow(peakTable)) stop ('mismatch number of samples in peak table and injection sequence')
-  QCCV = batchCorr::cv(peakTable)
+  QCCV = cv(peakTable)
   QCscale = scale(peakTable, center = FALSE)
   NAs = colSums(is.na(QCscale)) > 0
   QCRawNaRm = peakTable[, !NAs]

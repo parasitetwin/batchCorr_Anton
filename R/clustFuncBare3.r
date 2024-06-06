@@ -3,7 +3,7 @@
 #' Calculates CV per column in a matrix. Aka relative standard deviation (RSD).
 #' @param mat a matrix with variables as columns
 #' @return a vector of CVs
-#' @export
+#' @noRd
 ## Simple function for calculating cv per column (ie variable)
 cv=function(mat) {
   if (is.null(dim(mat))) {
@@ -21,7 +21,7 @@ cv=function(mat) {
 #'Calculate root mean squared distance from center point
 #' @param mat a matrix containing observations as rows and variables as columns
 #' @return a numeric rmsDist
-#' @export
+#' @noRd
 ## Simple function for calculating root mean square distance
 rmsDist=function(mat) {
 	mean=colMeans(mat)
@@ -45,8 +45,7 @@ rmsDist=function(mat) {
 #' @return BICTime: Time required for the BIC-calculation
 #' @return clustTime: Time required for the clustering
 #' @import mclust
-#' @export
-## Perform clustering
+#' @noRd
 clust=function(QCInjs,QCFeats,modelNames=c('VVE'),G=seq(1,52,by=3),report=FALSE) {
   if (length(QCInjs)!=nrow(QCFeats)) stop ('nrow(QCFeats) not equal to length(QCInjs)')
 	# modelNames='VVV'
@@ -91,7 +90,7 @@ clust=function(QCInjs,QCFeats,modelNames=c('VVE'),G=seq(1,52,by=3),report=FALSE)
 #' @importFrom stats lm loess smooth.spline predict
 #' @importFrom graphics lines matplot par
 #' @import reshape
-#' @export
+#' @noRd
 ## Calculate drift clusters
 driftCalc=function(QCClust,smoothFunc=c('spline','loess'),spar=0.2,report=FALSE) {
 	if (missing(smoothFunc)) smoothFunc='spline'
@@ -190,7 +189,7 @@ driftCalc=function(QCClust,smoothFunc=c('spline','loess'),spar=0.2,report=FALSE)
 #' @return drift corrected corr/batch samples
 #' @importFrom graphics hist legend
 #' @importFrom grDevices rgb
-#' @export
+#' @noRd
 ## Perform drift correction for clusters IF rmsdRef is improved
 driftCorr=function(QCDriftCalc,refList=NULL,refType=c('none','one','many'),CorrObj=NULL,report=FALSE) {
 	if (missing(refType)) refType='none'
@@ -311,7 +310,7 @@ driftCorr=function(QCDriftCalc,refList=NULL,refType=c('none','one','many'),CorrO
 #' @return TestFeatsFinal: Final peaktable for batch samples
 #' @return finalVars: All features kept within the final peaktable
 #' @return QCcvs: CVs per features kept within the final peaktable
-#' @export
+#' @noRd
 ## Remove individual variables with CV>limit
 cleanVar=function(QCCorr,CVlimit=.2,report=FALSE) {
 	QCFeats=QCCorr$QCFeats
@@ -396,7 +395,7 @@ cleanVar=function(QCCorr,CVlimit=.2,report=FALSE) {
 #' @param report boolean whether to print a pdf report of drift models
 #'
 #' @return A drift corrected object with QC features CV<limit containing final peak table
-#' @export
+#' @noRd
 driftWrap=function(QCObject, modelNames=NULL, G=seq(1,40,by=3), BatchObject, RefObject=NULL, CVlimit=0.3, report=FALSE) {
   if (is.null(RefObject)) refType='none' else refType='one'
 	driftList=clust(QCObject$inj,QCObject$Feats,modelNames=modelNames, G=G, report=report)

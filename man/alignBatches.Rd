@@ -46,9 +46,14 @@ Returns NULL if no alignment candidates can be found
 Perform multi-batch alignment to merge features artificially split between batches
 }
 \examples{
-library(batchCorr)
-data('ThreeBatchData') # loads "meta" (metadata), "PTnofill" (Multi-batch peak table including missing values) and "PTfill" (Multi-batch peak table without missing values)
-peakIn=peakInfo(PT = PTnofill, sep = '@', start = 3) # Extract peakinfo (i.e. m/z and rt of features) # Thesecolumn names have 2 leading characters describing LC-MS mode -> start at 3
-alignBat <- alignBatches(peakInfo = peakIn, PeakTabNoFill = PTnofill, PeakTabFilled = PTfill, batches = meta$batch, sampleGroups = meta$grp, selectGroup = 'QC') # Perform multi-batch alignment
-PTAlign=alignBat$PTalign # Extract new peak table
+data('ThreeBatchData')
+# Extract peakinfo (i.e. m/z and rt of features). These column names have 2
+# leading characters describing LC-MS mode -> start at 3
+peakIn <- peakInfo(PT = PTnofill, sep = '@', start = 3)  
+# Perform multi-batch alignment
+alignBat <- alignBatches(peakInfo = peakIn, PeakTabNoFill = PTnofill,
+                         PeakTabFilled = PTfill, batches = meta$batch,
+                         sampleGroups = meta$grp, selectGroup = 'QC')
+# Extract new peak table
+PT <- alignBat$PTalign 
 }

@@ -1,7 +1,42 @@
 
+
+data("OneBatchData")
+data("ThreeBatchData")
+# Same result with peakTable=PTnofill
+batchB=getBatch(peakTable=PTfill, meta=meta, batch=meta$batch, select='B')
+identical(batchB$meta$batch, B_meta$batch) # metadata are identical
+identical(batchB$peakTable, B_PT) # peakTables are not identical
+
+However, tutorial/vignette:
+peakIn <- peakInfo(PT = PTnofill, sep = '@', start = 3)
+alignBat <- alignBatches(peakInfo = peakIn, PeakTabNoFill = PTnofill, PeakTabFilled = PTfill, batches = meta$batch, sampleGroups = meta$grp, selectGroup = 'QC')
+PT=alignBat$PTalign
+batchB <- getBatch(peakTable = PT, meta = meta, batch = meta$batch, select = 'B')
+# metadata and peakTable are identical!
+identical(batchB$meta$batch, B_meta$batch) # metadata are identical
+identical(batchB$peakTable, B_PT) # peakTables are identical
+
+BCorr <- correctDrift(peakTable = batchB$peakTable, injections = batchB$meta$inj, sampleGroups = batchB$meta$grp, QCID = 'QC', G = seq(5,35,by=3), modelNames = c('VVE', 'VEE'))
+
+batchF <- getBatch(peakTable = PTfill, meta = meta, batch = meta$batch, select = 'F')
+FCorr <- correctDrift(peakTable = batchF$peakTable, injections = batchF$meta$inj, sampleGroups = batchF$meta$grp, QCID = 'QC', G = seq(5,35,by=3), modelNames = c('VVE', 'VEE'))
+
+mergedData <- mergeBatches(list(BCorr, FCorr, HCorr))
+
+# The example data does not include any biological samples, in which case population = "sample" does not work
+normData <- normalizeBatches(peakTableCorr = mergedData$peakTableCorr, 
+                             batches = meta$batch, sampleGroup = meta$grp,
+                             refGroup = 'Ref', population = 'all')
+
+normData <- normalizeBatches(peakTable = mergedData$peakTable, batches = meta$batch, sampleGroup = meta$grp, refGroup = 'Ref', population = 'sample')
+
+
+
 peakInfo: extract m/z and rt of features
 
 alignBatches: between-batch alignment
+The PeakTabNoFill argument is used to choose features for alignment
+The PeakTabFilled argument is used for batchAlign, the actual aligning of the peakTable
 
 makeBatchObject!
 - "Prepare a Batch object for drift correction"

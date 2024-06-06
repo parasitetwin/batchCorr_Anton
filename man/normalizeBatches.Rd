@@ -46,3 +46,11 @@ refCorrected: Boolean matrix with info on which batches were normalised by refer
 Batches are feature-wise normalised by Ref samples if passing heuristic criteria (CV and fold change).
 Otherwise normalized by population median (still per feature).
 }
+\examples{
+# Note that the example data does not include any biological samples, in
+# which case population = "sample" does not work
+data("ThreeBatchData")
+normData <- normalizeBatches(peakTableCorr = PTfill, batches = meta$batch,
+                             sampleGroup = meta$grp, refGroup = "Ref",
+                             population = "all")
+}

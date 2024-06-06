@@ -26,6 +26,11 @@ $meta: Single batch metadata
 Extract specific batch from peaktable and metadata
 }
 \examples{
-data(ThreeBatchData)
-batchB=getBatch(peakTable=PTfill, meta=meta, batch=meta$batch, select='B')
+data('ThreeBatchData') 
+# Get batches for drift correction
+batchB <- getBatch(peakTable = PTfill, meta = meta, 
+                   batch = meta$batch, select = 'B')
+batchF <- getBatch(peakTable = PTfill, meta = meta, 
+                   batch = meta$batch, select = 'F')
+
 }
