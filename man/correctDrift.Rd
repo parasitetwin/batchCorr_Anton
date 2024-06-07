@@ -12,6 +12,8 @@ correctDrift(
   RefID = "none",
   modelNames = c("VVV", "VVE", "VEV", "VEE", "VEI", "VVI", "VII"),
   G = seq(5, 35, by = 10),
+  smoothFunc = "spline",
+  spar = 0.2,
   CVlimit = 0.3,
   report = TRUE
 )
@@ -30,6 +32,10 @@ correctDrift(
 \item{modelNames}{Which MClust geometries to test (see mclust documentation)}
 
 \item{G}{Which numbers of clusters to test (see mclust documentation)}
+
+\item{smoothFunc}{choice of regression function: spline or loess (defaults to spline)}
+
+\item{spar}{smoothing parameter for spline or loess (defaults to 0.2)}
 
 \item{CVlimit}{QC feature CV limit as final feature inclusion criterion}
 

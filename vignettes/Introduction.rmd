@@ -155,9 +155,7 @@ PTnorm <- normData$peakTable
 
 # Authors & Acknowledgements
 
-The first version of ```batchCorr``` was written by Carl Brunius, Lin Shi and Rikard Landberg. The package is inspired by...
-```batchCorr``` was developed for Bioconductor by Carl Brunius, Vilhelm Suksi and ...
-If you find any bugs or other things to fix, please submit an issue on GitLab! All contributions to the package are always welcome!
+The first version of ```batchCorr``` was written by Carl Brunius. ```batchCorr``` was developed for Bioconductor by Carl Brunius, Anton Ribbenstedt and Vilhelm Suksi. If you find any bugs or other things to fix, please submit an issue on GitLab! All contributions to the package are always welcome!
 
 # Session information
 

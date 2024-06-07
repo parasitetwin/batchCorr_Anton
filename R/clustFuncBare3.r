@@ -78,7 +78,7 @@ clust=function(QCInjs,QCFeats,modelNames=c('VVE'),G=seq(1,52,by=3),report=FALSE)
 #' Clustered, scaled QC features are pooled together and intensity drift patterns are modelled per cluster
 #' @param QCClust a clust object
 #' @param smoothFunc choice of regression function: spline or loess (defaults to spline)
-#' @param spar smoothing parameter for spline or loess
+#' @param spar smoothing parameter for spline or loess (defaults to 0.2)
 #' @param report boolean whether to print a pdf report of drift models
 #' @return a driftCalc object containing:
 #' @return original information from clust object (indata) and
@@ -93,7 +93,6 @@ clust=function(QCInjs,QCFeats,modelNames=c('VVE'),G=seq(1,52,by=3),report=FALSE)
 #' @noRd
 ## Calculate drift clusters
 driftCalc=function(QCClust,smoothFunc=c('spline','loess'),spar=0.2,report=FALSE) {
-	if (missing(smoothFunc)) smoothFunc='spline'
 	MC=QCClust$clust
 	QCInjs=QCClust$QCInjs
 	QCFeats=QCClust$QCFeats
@@ -396,10 +395,10 @@ cleanVar=function(QCCorr,CVlimit=.2,report=FALSE) {
 #'
 #' @return A drift corrected object with QC features CV<limit containing final peak table
 #' @noRd
-driftWrap=function(QCObject, modelNames=NULL, G=seq(1,40,by=3), BatchObject, RefObject=NULL, CVlimit=0.3, report=FALSE) {
+driftWrap=function(QCObject, modelNames=NULL, G=seq(1,40,by=3), BatchObject, RefObject=NULL, smoothFunc, spar, CVlimit=0.3, report=FALSE) {
   if (is.null(RefObject)) refType='none' else refType='one'
 	driftList=clust(QCObject$inj,QCObject$Feats,modelNames=modelNames, G=G, report=report)
-	driftList=driftCalc(driftList,report=report)
+	driftList=driftCalc(driftList, smoothFunc = smoothFunc, spar = spar, report=report)
 	driftList=driftCorr(QCDriftCalc = driftList,refList=RefObject,refType=refType,CorrObj=BatchObject,report=report)
 	driftList=cleanVar(driftList,CVlimit=CVlimit,report=report)
 	return(driftList)

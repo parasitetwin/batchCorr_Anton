@@ -7,6 +7,8 @@
 #' @param RefID Optional identifier in sampleGroups of external reference samples for unbiased assessment of drift correction (see batchCorr tutorial at Gitlab page)
 #' @param modelNames Which MClust geometries to test (see mclust documentation)
 #' @param G Which numbers of clusters to test (see mclust documentation)
+#' @param smoothFunc choice of regression function: spline or loess (defaults to spline)
+#' @param spar smoothing parameter for spline or loess (defaults to 0.2)
 #' @param CVlimit QC feature CV limit as final feature inclusion criterion
 #' @param report Boolean whether to print pdf reports of drift models
 #'
@@ -37,7 +39,7 @@
 #'                       modelNames = c('VVE', 'VEE'))
 #' # Merge batches for batch normalization, for example
 #' mergedData <- mergeBatches(list(BCorr, FCorr))
-correctDrift <- function(peakTable, injections, sampleGroups, QCID='QC', RefID='none', modelNames = c('VVV','VVE','VEV','VEE','VEI','VVI','VII'), G = seq(5,35,by=10) , CVlimit = 0.3, report = TRUE) {
+correctDrift <- function(peakTable, injections, sampleGroups, QCID='QC', RefID='none', modelNames = c('VVV','VVE','VEV','VEE','VEI','VVI','VII'), G = seq(5,35,by=10), smoothFunc = "spline", spar = 0.2, CVlimit = 0.3, report = TRUE) {
   # Some basic sanity check
   if (nrow(peakTable)!=length(injections)) stop ('nrow(peakTable) not equal to length(injections)')
   if (is.null(colnames(peakTable))) stop ('All features/variables need to have unique names')
@@ -53,9 +55,9 @@ correctDrift <- function(peakTable, injections, sampleGroups, QCID='QC', RefID='
   if (RefID!="none") {
     batchRef=.getGroup(peakTable=peakTable, meta=meta, sampleGroup=sampleGroups, select=RefID) # Extract Ref info
     RefObject=makeBatchObject(peakTable = batchRef$peakTable, inj = batchRef$meta$inj, QCObject = QCObject) # Prepare Ref object for drift correction
-    Corr=driftWrap(QCObject = QCObject, BatchObject = BatchObject, RefObject = RefObject, modelNames = modelNames, G = G, CVlimit = CVlimit, report = report) # Perform drift correction
+    Corr=driftWrap(QCObject = QCObject, BatchObject = BatchObject, RefObject = RefObject, modelNames = modelNames, G = G, smoothFunc = smoothFunc, spar = spar, CVlimit = CVlimit, report = report) # Perform drift correction
   } else {
-    Corr=driftWrap(QCObject = QCObject, BatchObject = BatchObject, modelNames = modelNames, G = G, CVlimit = CVlimit, report = report) # Perform drift correction
+    Corr=driftWrap(QCObject = QCObject, BatchObject = BatchObject, modelNames = modelNames, G = G, smoothFunc = smoothFunc, spar = spar, CVlimit = CVlimit, report = report) # Perform drift correction
   }
   return(Corr)
 }
