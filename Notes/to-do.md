@@ -1,6 +1,8 @@
 # To-do
 **This to-do list is prioritized; prefer tasks at the top of the list. Vilhelm has an overarching sense of the order in which tasks are best performed, and updates this list accordingly. You could copy the task name as a commit title.**
 
+Read through the Bioconductor submission guidelines to see if there's something important to add!
+
 R CMD check error: no test files
 - Write unit tests, primarily for exported functions
 
