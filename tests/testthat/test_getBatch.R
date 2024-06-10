@@ -12,12 +12,15 @@ test_that("getBatch",{
     batchVector <- c(batchVector,
                      strsplit(rownames(batchF$peakTable)[i], "_")[[1]][3])
   }
+  
   expect_true(length(batchVector) == nrow(batchF$meta) && nrow(batchF$meta) == nrow(PTfill[grepl("BatchF", rownames(PTfill)), ]))
   
-  #Expecting false return values when input is a vector - Function causes bugs when this is done
-  dimFandH <- dim(getBatch(PTfill, meta, meta$batch, c("F", "H"))$peakTable)[1]
-  dimF <- dim(getBatch(PTfill, meta, meta$batch, c("F"))$peakTable)[1]
-  dimH <- dim(getBatch(PTfill, meta, meta$batch, c("H"))$peakTable)[1]
-  expect_false(dimFandH == dimF && dimFandH == dimH)
+  #Expecting that selecting multiple batches should generate error
+  expect_error(getBatch(PTfill, meta, meta$batch, select=c("F", "H")))
   
+  #Expecting error when trying to collect batch which doesn't exist in meta$batch
+  expect_error(getBatch(PTfill, meta, meta$batch, select = "A"))
+  
+  #Expecting error when using a meta with less samples than there are samples in the peak table
+  expect_error(getBatch(PTfill, meta[1:80], meta$batch[1:80], select="F"))
 })

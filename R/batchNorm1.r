@@ -16,6 +16,27 @@
 #'
 #' @export
 peakInfo=function(PT,sep='_',timepos=2,start=1) {
+  #Making sure separator is present in colnames of peak table (PT)
+  if(!any(grepl(sep, colnames(PT)))){
+    message(paste0("Error in 'peakInfo': Separator not present in column names of peak table."))
+    stop()
+  }
+  #Making sure type of start is numeric in nature
+  if(!is.numeric(start) || !is.numeric(timepos)){
+    whichNotNumeric <- c("'start'", "'timepos'")
+    message(paste0("Error in 'peakInfo': ",
+                   paste(whichNotNumeric[c(!is.numeric(start),
+                                           !is.numeric(timepos))], collapse=" & "),
+                   " not numeric."))
+    stop()
+  }
+  
+  #Checking that separator is not longer than 1
+  if(length(sep) > 1){
+    message(paste0("Error: Only use of one separator possible"))
+    stop()
+  }
+  
   peakInfo=matrix(unlist(strsplit(colnames(PT),sep)),ncol=2,byrow=TRUE)
   peakInfo[,1]=substr(peakInfo[,1],start,max(nchar(peakInfo[,1])))
   peakInfo=matrix(as.numeric(peakInfo),ncol=2)
