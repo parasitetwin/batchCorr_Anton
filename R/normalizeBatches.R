@@ -28,14 +28,27 @@ normalizeBatches <- function(peakTableCorr,
                              medianZero = c('mean', 'min')){
   
   # Basic sanity checks and setting defaults
-  if (missing(peakTableOrg)) peakTableOrg <- peakTableCorr
-  if (!(identical(dim(peakTableCorr), dim(peakTableOrg)) & identical(colnames(peakTableCorr), colnames(peakTableOrg)))) stop('Mismatch between peakTableCorr and peakTableOrg')
-  if (missing(medianZero)) medianZero <- 'min'
-  if (population == 'all') popSample <- rep(TRUE,nrow(peakTableCorr)) else {
-    if (!population %in% sampleGroup) (stop('population identifier needs to be present in sampleGroups\nConsider setting population="all"')) else {
+  # Setting defaults
+  if (missing(peakTableOrg)){
+    peakTableOrg <- peakTableCorr
+  } 
+  if (missing(medianZero)){
+    medianZero <- 'min'
+  } 
+  if (population == 'all'){
+    popSample <- rep(TRUE,nrow(peakTableCorr))
+  } else {
+    # Checking that user specified population is actually present among the group denotations
+    if (!population %in% sampleGroup) {
+      stop('population identifier needs to be present in sampleGroups\nConsider setting population="all"')
+    } else {
       popSample <- sampleGroup == population
     }
   }
+  # If dimensions or colnames of Corr and Org peakTables are not identical throw error
+  if (!(identical(dim(peakTableCorr), dim(peakTableOrg)) & identical(colnames(peakTableCorr), colnames(peakTableOrg)))){
+    stop('Mismatch between peakTableCorr and peakTableOrg')
+  } 
   #Checking that refGroup is present in sampleGroup
   if (!refGroup%in%sampleGroup){
     stop('refGroup identifier needs to be present in sampleGroups.\nConsider setting population="all"')

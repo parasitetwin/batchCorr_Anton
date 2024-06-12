@@ -38,13 +38,16 @@
 #'
 #' @export
 mergeBatches <- function(batchList, qualRatio=0.5) {
+  # Determining number of batches and batch-ratio needed to surpass to keep a feature
   nBatch <- length(batchList)
   nQual <- ceiling(qualRatio*nBatch)
+  #If no batchnames supplied in batchList names batches from 1-nBatches
   if(is.null(names(batchList))) {
     batchNames <- 1:nBatch
   } else {
     batchNames <- names(batchList)
   }
+  # Settings up lists and vectors to store batch-specific information in
   nSamp <- numeric(nBatch)
   injections <- list()
   qualFeatures <- list()
@@ -57,7 +60,7 @@ mergeBatches <- function(batchList, qualRatio=0.5) {
     peakTablesOrg[[batch]] <- batchList[[batch]]$TestFeats
     peakTablesCorr[[batch]] <- batchList[[batch]]$TestFeatsCorr
   }
-  # Aggregate data
+  # Aggregate data and merge
   injections <- do.call(c,injections)
   batches <- rep(batchNames,nSamp)
   qualFeatures <- do.call(c,qualFeatures)

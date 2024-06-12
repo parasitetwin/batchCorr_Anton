@@ -30,16 +30,17 @@ peakInfo=function(PT,sep='_',timepos=2,start=1) {
                    " not numeric."))
     stop()
   }
-  
   #Checking that separator is not longer than 1
   if(length(sep) > 1){
     message(paste0("Error: Only use of one separator possible"))
     stop()
   }
   
+  #Making matrix of mz and rt after splitting by separator
   peakInfo=matrix(unlist(strsplit(colnames(PT),sep)),ncol=2,byrow=TRUE)
   peakInfo[,1]=substr(peakInfo[,1],start,max(nchar(peakInfo[,1])))
   peakInfo=matrix(as.numeric(peakInfo),ncol=2)
+  #Reverse column order if time is not after separator
   if (timepos!=2) peakInfo=peakInfo[,2:1]
   colnames(peakInfo)=c('mz','rt')
   rownames(peakInfo)=paste('feature',1:nrow(peakInfo),sep='_')
