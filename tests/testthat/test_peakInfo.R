@@ -1,7 +1,6 @@
 library(stringr)
 library(testthat)
 
-context("peakInfo")
 test_that("peakInfo", {
   
   data("ThreeBatchData", package="batchCorr")
