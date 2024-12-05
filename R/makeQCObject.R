@@ -10,7 +10,9 @@
 #' @noRd
 makeQCObject=function (peakTable, inj)
 {
-  if(length(inj)!=nrow(peakTable)) stop ('mismatch number of samples in peak table and injection sequence')
+  if(length(inj)!=nrow(peakTable)){
+    stop ('mismatch number of samples in peak table and injection sequence')
+  } 
   QCCV = cv(peakTable)
   QCscale = scale(peakTable, center = FALSE)
   NAs = colSums(is.na(QCscale)) > 0

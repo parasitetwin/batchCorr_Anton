@@ -92,7 +92,11 @@ clust=function(QCInjs,QCFeats,modelNames=c('VVE'),G=seq(1,52,by=3),report=FALSE)
 #' @import reshape
 #' @noRd
 ## Calculate drift clusters
-driftCalc=function(QCClust,smoothFunc=c('spline','loess'),spar=0.2,report=FALSE) {
+driftCalc=function(QCClust,
+                   batchTotalInj,
+                   smoothFunc=c('spline','loess'),
+                   spar=0.2,
+                   report=FALSE) {
 	MC=QCClust$clust
 	QCInjs=QCClust$QCInjs
 	QCFeats=QCClust$QCFeats
@@ -139,6 +143,18 @@ driftCalc=function(QCClust,smoothFunc=c('spline','loess'),spar=0.2,report=FALSE)
 						Pred=data.frame(x=injs,y=Pred)
 					}
 				}
+			# 241205 Adding extrapolation if batchTotalInj longer than QC inj
+			if(length(Pred$x) > length(batchTotalInj)){
+			  injDiff <- (length(batchTotalInj) - length(Pred$x))
+			  Pred$y <- c(Pred$y,
+			              rep(Pred$y[length(Pred$y)], injDiff))
+			  Pred$x <- batchTotalInj
+			  
+			  corMat <- rbind(corMat,
+			                  matrix(nrow = injDiff,
+			                         ncol = ncol(corMat)))
+			}
+			
 			corFact=Pred$y[1]/Pred$y  # Calculate correction factors for all injections
 			corMat[,n]=corFact # Store cluster correction factors in "master" matrix
 			corQC=corFact[QCInjs-min(QCInjs)+1]  # Bring out correction factors for QC samples specifically

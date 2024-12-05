@@ -10,7 +10,7 @@
 #' @noRd
 makeBatchObject=function (peakTable, inj, QCObject)
 {
-  if(length(inj)!=nrow(peakTable)) stop ('mismatch number of samples in peak table and injection sequence')
+  # if(length(inj)!=nrow(peakTable)) stop ('mismatch number of samples in peak table and injection sequence')
   QCInj=QCObject$inj
   minInj=min(QCInj)
   maxInj=max(QCInj)
