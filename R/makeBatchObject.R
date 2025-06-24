@@ -14,6 +14,6 @@ makeBatchObject=function (peakTable, inj, QCObject)
   QCInj=QCObject$inj
   minInj=min(QCInj)
   maxInj=max(QCInj)
-  if(any(inj<minInj) | any(inj>maxInj)) stop('Batch injections outside of QCs. Correction is not possible.')
+  if(any(inj<minInj)) stop('Batch injections outside of QCs. Correction is not possible.')
   return(list(inj = inj, Feats = peakTable))
 }
