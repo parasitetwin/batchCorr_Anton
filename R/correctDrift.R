@@ -39,12 +39,26 @@
 #'                       modelNames = c('VVE', 'VEE'))
 #' # Merge batches for batch normalization, for example
 #' mergedData <- mergeBatches(list(BCorr, FCorr))
-correctDrift <- function(peakTable, injections, sampleGroups, QCID='QC', RefID='none', modelNames = c('VVV','VVE','VEV','VEE','VEI','VVI','VII'), G = seq(5,35,by=10), smoothFunc = "spline", spar = 0.2, CVlimit = 0.3, report = TRUE) {
+correctDrift <- function(peakTable, injections, sampleGroups, QCID='QC', RefID='none', modelNames = c('VVV','VVE','VEV','VEE','VEI','VVI','VII'), G = seq(5,35,by=10), smoothFunc = "spline", spar = 0.2, CVlimit = 0.3, report = TRUE, reportPath = NULL) {
   # Some basic sanity check
   if (nrow(peakTable)!=length(injections)) stop ('nrow(peakTable) not equal to length(injections)')
   if (is.null(colnames(peakTable))) stop ('All features/variables need to have unique names')
   if (length(sampleGroups)!=length(injections)) stop ('length(sampleGroups) not equal to length(injections)')
   if(!identical(sort(injections),injections)) stop ('injection sequence is not in order\nPlease resort peakTable, injections and sampleGroups accordingly')
+  if (report & is.null(reportPath)) {
+      stop("Argument 'reportPath' is missing")
+  }
+  if (report & !is.null(reportPath)) {
+      if (!endsWith(reportPath, "/")) {
+      message("Adding a slash to file path to allow proper folder structure")
+          reportPath <- paste0(reportPath, "/")
+      }
+      if (!file.exists(reportPath)) {
+          message("Creating folder ", reportPath)
+          dir.create(reportPath, recursive = TRUE)
+      }
+  }
+  
   meta=data.frame(injections,sampleGroups)
   # Prepare QC data
   batchQC=.getGroup(peakTable=peakTable, meta=meta, sampleGroup=sampleGroups, select=QCID) # Extract QC info
