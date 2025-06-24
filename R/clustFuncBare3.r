@@ -98,106 +98,109 @@ clust=function(QCInjs,QCFeats,modelNames=c('VVE'),G=seq(1,52,by=3),report=FALSE,
 #' @noRd
 ## Calculate drift clusters
 driftCalc=function(QCClust,
-                   batchInj,
 		   samplesInj,
                    smoothFunc=c('spline','loess'),
                    spar=0.2,
                    report=FALSE,
 		   reportPath) {
-	MC=QCClust$clust
-	QCInjs=QCClust$QCInjs
-	QCFeats=QCClust$QCFeats
-	if (length(QCInjs)!=nrow(QCFeats)) stop ('nrow(QCFeats) not equal to length(QCInjs)')
-	# Extract classes
-		nclass=MC$G # Take out total number of identified clusters/components/groups/classes/whatever you want to call them
-		classes=MC$classification # Take out the classifications for the different variables
-	# Allocate variables
-		cvRaw=cvCorr=deltaDist=numeric(nclass) # allocate vector for effect size of drift correction per cluster
-		injs=min(QCInjs):max(QCInjs) # Make injection list
-		corMat=matrix(nrow=length(injs),ncol=nclass) # Allocate matrix with correction function (rows) per cluster (column)
-		cvs=varClust=list()
-		ratios=matrix(nrow=nclass,ncol=4)
-		rownames(ratios)=paste('cluster',1:nclass,sep='')
-		colnames(ratios)=c('raw.15','corr.15','raw.2','corr.2')
-	if (report == TRUE) {
-	        pdf(file = paste(reportPath,
-	            "cluster_G",
-	            nclass, "_",
-	            format(Sys.time(), format = "%y%m%d_%H%M"),
-	            ".pdf",
-	            sep = ""
-	        ))
-	        par(mfrow = c(2, 1))
-	        par(mar = c(2, 4, 2, 0))
-    	}
-	### Calculate drift correction for each cluster
-	# Calculate distance on scaled variables
-	rmsdRaw=rmsDist(QCFeats)
-		for (n in 1:nclass) {
-			QCFeatsCorr=QCFeats # Allocate matrix (for drift corrected variables) for later QC distance calculation
-			whichVars=which(classes==n)
-			vars=QCFeats[,whichVars] # Take out cluster variables
-			varClust[[n]]=colnames(QCFeats)[whichVars]
-			V=as.data.frame(cbind(QCInjs,vars)) # Arrange and rearrange data
-			V=melt(V,id.vars='QCInjs')
-			V=V[order(V$QCInjs),]
-			# Interpolations
-				if (length(QCInjs)<=3) {  # 2nd degree polynomial if <4 data points
-					Fit=lm(value ~ poly(QCInjs,2),data=V)
-					Pred=predict(Fit,data.frame(QCInjs=injs))
-					Pred=data.frame(x=injs,y=Pred)
-				} else {
-					if (smoothFunc=='spline') {
-						splineFit=smooth.spline(V$QCInjs,V$value,spar=spar) # Cubic spline regression otherwise
-						Pred=predict(splineFit,injs)  # Predict drift over all injections
-					} else {
-						loessFit=loess(value~QCInjs,data=V,span=spar)
-						Pred=predict(loessFit,data.frame(QCInjs=injs))
-						Pred=data.frame(x=injs,y=Pred)
-					}
-				}
-			# 241205 Adding extrapolation if batchTotalInj longer than QC inj
-			if(length(Pred$x) > length(batchTotalInj)){
-			  injDiff <- (length(batchTotalInj) - length(Pred$x))
-			  Pred$y <- c(Pred$y,
-			              rep(Pred$y[length(Pred$y)], injDiff))
-			  Pred$x <- batchTotalInj
-			  
-			  corMat <- rbind(corMat,
-			                  matrix(nrow = injDiff,
-			                         ncol = ncol(corMat)))
-			}
-			
-			corFact=Pred$y[1]/Pred$y  # Calculate correction factors for all injections
-			corMat[,n]=corFact # Store cluster correction factors in "master" matrix
-			corQC=corFact[QCInjs-min(QCInjs)+1]  # Bring out correction factors for QC samples specifically
-			QCFeatsCorr[,classes==n]=QCFeats[,classes==n]*corQC  # correct drift within cluster
-			## Calculate rmsDist
-			rmsdCorr=rmsDist(QCFeatsCorr)
-			deltaDist[n]=rmsdCorr-rmsdRaw
-			# deltaDist[n]=mean(dist(QCFeatsCorr))-meanDistQCFeats # Calculate change in average QC distance
-			cvRaw[n]=mean(cv(QCFeats[,classes==n]))
-			cvCorr[n]=mean(cv(QCFeatsCorr[,classes==n]))
-			cvs[[n]]=data.frame(Raw=cv(QCFeats[,classes==n]),Corr=cv(QCFeatsCorr[,classes==n]))
-			ratios[n,]=c(sum(cvs[[n]]$Raw<0.15)/nrow(cvs[[n]]),sum(cvs[[n]]$Corr<0.15)/nrow(cvs[[n]]),sum(cvs[[n]]$Raw<0.2)/nrow(cvs[[n]]),sum(cvs[[n]]$Corr<0.2)/nrow(cvs[[n]]))
-			if (report==TRUE) {
-				# Plot drift and drift function
-				matplot(QCInjs,QCFeats[,classes==n],type='l',lty=1,col='grey',ylim=range(QCFeats[,classes==n]),main=paste('Cluster ',n,'; n=',sum(classes==n),'; Raw; Mean CV=',round(mean(cv(QCFeats[,classes==n])),3),sep=''),ylab='Scaled intensity',xlab='Injection number')
-				lines(Pred,pch=2)
-				matplot(QCInjs,QCFeatsCorr[,classes==n],type='l',lty=1,col='grey',ylim=range(QCFeats[,classes==n]),main=paste('Corrected; Mean CV=',round(mean(cv(QCFeatsCorr[,classes==n])),3),sep=''),ylab='Scaled intensity',xlab='Injection number')
-			}
-		}
-	if (report==TRUE) dev.off() # Close pdf file
-	clustComm=rep('None',nclass)
-	actionInfo=data.frame(number=1:nclass,n=vapply(varClust,length, integer(1)),action=clustComm,CVRaw=cvRaw,CVCorr=cvCorr)
-	QCClust$actionInfo=actionInfo
-	QCClust$ratios=ratios
-	QCClust$corMat=corMat
-	QCClust$deltaDist=deltaDist
-	QCClust$varClust=varClust
-	QCDriftCalc=QCClust
-	cat('\nCalculation of QC drift profiles performed.\n')
-	return(QCDriftCalc)
+	MC = QCClust$clust
+  QCInjs = QCClust$QCInjs
+  QCFeats = QCClust$QCFeats
+  if (length(QCInjs) != nrow(QCFeats)) 
+    stop("nrow(QCFeats) not equal to length(QCInjs)")
+  nclass = MC$G
+  classes = MC$classification
+  cvRaw = cvCorr = deltaDist = numeric(nclass)
+  injs = min(QCInjs):max(QCInjs)
+  corMat = matrix(nrow = length(injs), ncol = nclass)
+  cvs = varClust = list()
+  ratios = matrix(nrow = nclass, ncol = 4)
+  rownames(ratios) = paste("cluster", 1:nclass, sep = "")
+  colnames(ratios) = c("raw.15", "corr.15", "raw.2", "corr.2")
+  if (report == TRUE) {
+    pdf(file = paste(reportPath, "cluster_G", nclass, "_", 
+                     format(Sys.time(), format = "%y%m%d_%H%M"), ".pdf", 
+                     sep = ""))
+    par(mfrow = c(2, 1))
+    par(mar = c(2, 4, 2, 0))
+  }
+  rmsdRaw = batchCorr:::rmsDist(QCFeats)
+  for (n in 1:nclass) {
+    QCFeatsCorr = QCFeats
+    whichVars = which(classes == n)
+    vars = QCFeats[, whichVars]
+    varClust[[n]] = colnames(QCFeats)[whichVars]
+    V = as.data.frame(cbind(QCInjs, vars))
+    V = reshape2::melt(V, id.vars = "QCInjs")
+    V = V[order(V$QCInjs), ]
+    if (length(QCInjs) <= 3) {
+      Fit = lm(value ~ poly(QCInjs, 2), data = V)
+      Pred = predict(Fit, data.frame(QCInjs = injs))
+      Pred = data.frame(x = injs, y = Pred)
+    } else {
+      if (smoothFunc == "spline") {
+        splineFit = smooth.spline(V$QCInjs, V$value, 
+                                  spar = spar)
+        Pred = predict(splineFit, injs)
+      } else {
+        loessFit = loess(value ~ QCInjs, data = V, span = spar)
+        Pred = predict(loessFit, data.frame(QCInjs = injs))
+        Pred = data.frame(x = injs, y = Pred)
+      }
+    }
+    if (max(samplesInj) > max(QCInjs)) {
+      injDiff <- (max(samplesInj) - max(QCInjs))
+      Pred$y <- c(Pred$y, rep(Pred$y[length(Pred$y)], 
+                              injDiff))
+      Pred$x <- c(Pred$x, c((max(Pred$x)+1):(max(Pred$x)+injDiff)))
+      if(nrow(corMat) < max(samplesInj)){
+        corMat <- rbind(corMat, matrix(nrow = injDiff, ncol = ncol(corMat)))
+      }
+    }
+    corFact = Pred$y[1]/Pred$y
+      corMat[, n] = corFact
+    corQC = corFact[QCInjs - min(QCInjs) + 1]
+    QCFeatsCorr[, classes == n] = QCFeats[, classes == n] * 
+      corQC
+    rmsdCorr = batchCorr:::rmsDist(QCFeatsCorr)
+    deltaDist[n] = rmsdCorr - rmsdRaw
+    cvRaw[n] = mean(batchCorr:::cv(QCFeats[, classes == n]))
+    cvCorr[n] = mean(batchCorr:::cv(QCFeatsCorr[, classes == n]))
+    cvs[[n]] = data.frame(Raw = batchCorr:::cv(QCFeats[, classes == 
+                                             n]), Corr = batchCorr:::cv(QCFeatsCorr[, classes == n]))
+    ratios[n, ] = c(sum(cvs[[n]]$Raw < 0.15)/nrow(cvs[[n]]), 
+                    sum(cvs[[n]]$Corr < 0.15)/nrow(cvs[[n]]), sum(cvs[[n]]$Raw < 
+                                                                    0.2)/nrow(cvs[[n]]), sum(cvs[[n]]$Corr < 0.2)/nrow(cvs[[n]]))
+    if (report == TRUE) {
+      matplot(QCInjs, QCFeats[, classes == n], type = "l", 
+              lty = 1, col = "grey", ylim = range(QCFeats[, 
+                                                          classes == n]), main = paste("Cluster ", n, 
+                                                                                       "; n=", sum(classes == n), "; Raw; Mean CV=", 
+                                                                                       round(mean(batchCorr:::cv(QCFeats[, classes == n])), 3), 
+                                                                                       sep = ""), ylab = "Scaled intensity", xlab = "Injection number")
+      lines(Pred, pch = 2)
+      matplot(QCInjs, QCFeatsCorr[, classes == n], type = "l", 
+              lty = 1, col = "grey", ylim = range(QCFeats[, 
+                                                          classes == n]), main = paste("Corrected; Mean CV=", 
+                                                                                       round(mean(batchCorr:::cv(QCFeatsCorr[, classes == n])), 
+                                                                                             3), sep = ""), ylab = "Scaled intensity", 
+              xlab = "Injection number")
+    }
+  }
+  if (report == TRUE) 
+    dev.off()
+  clustComm = rep("None", nclass)
+  actionInfo = data.frame(number = 1:nclass, n = vapply(varClust, 
+                                                        length, integer(1)), action = clustComm, CVRaw = cvRaw, 
+                          CVCorr = cvCorr)
+  QCClust$actionInfo = actionInfo
+  QCClust$ratios = ratios
+  QCClust$corMat = corMat
+  QCClust$deltaDist = deltaDist
+  QCClust$varClust = varClust
+  QCDriftCalc = QCClust
+  cat("\nCalculation of QC drift profiles performed.\n")
+  return(QCDriftCalc)
 }
 
 #' DC: Correct for intensity drift per cluster
