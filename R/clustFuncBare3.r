@@ -411,12 +411,12 @@ cleanVar=function(QCCorr,CVlimit=.2,report=FALSE) {
 #'
 #' @return A drift corrected object with QC features CV<limit containing final peak table
 #' @noRd
-driftWrap=function(QCObject, modelNames=NULL, G=seq(1,40,by=3), BatchObject, RefObject=NULL, smoothFunc, spar, CVlimit=0.3, report=FALSE) {
+driftWrap=function(QCObject, modelNames=NULL, G=seq(1,40,by=3), BatchObject, RefObject=NULL, smoothFunc, spar, CVlimit=0.3, report=FALSE, reportPath) {
   if (is.null(RefObject)) refType='none' else refType='one'
-	driftList=clust(QCObject$inj,QCObject$Feats,modelNames=modelNames, G=G, report=report)
-	driftList=driftCalc(driftList, smoothFunc = smoothFunc, spar = spar, report=report)
-	driftList=driftCorr(QCDriftCalc = driftList,refList=RefObject,refType=refType,CorrObj=BatchObject,report=report)
-	driftList=cleanVar(driftList,CVlimit=CVlimit,report=report)
+	driftList=clust(QCObject$inj,QCObject$Feats,modelNames=modelNames, G=G, report=report, reportPath = reportPath)
+	driftList=driftCalc(driftList, smoothFunc = smoothFunc, spar = spar, report=report, reportPath = reportPath)
+	driftList=driftCorr(QCDriftCalc = driftList,refList=RefObject,refType=refType,CorrObj=BatchObject,report=report, reportPath = reportPath)
+	driftList=cleanVar(driftList,CVlimit=CVlimit,report=report, reportPath = reportPath)
 	return(driftList)
 }
 
