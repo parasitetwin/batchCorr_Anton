@@ -46,7 +46,7 @@ rmsDist=function(mat) {
 #' @return clustTime: Time required for the clustering
 #' @import mclust
 #' @noRd
-clust=function(QCInjs,QCFeats,modelNames=c('VVE'),G=seq(1,52,by=3),report=FALSE) {
+clust=function(QCInjs,QCFeats,modelNames=c('VVE'),G=seq(1,52,by=3),report=FALSE, reportPath) {
   if (length(QCInjs)!=nrow(QCFeats)) stop ('nrow(QCFeats) not equal to length(QCInjs)')
 	# modelNames='VVV'
 	# modelNames=c('VEV','VVV')
@@ -64,7 +64,12 @@ clust=function(QCInjs,QCFeats,modelNames=c('VVE'),G=seq(1,52,by=3),report=FALSE)
 	endTime=proc.time()[3]
 	sumTime=endTime-startTime
 	if (report==TRUE) {
-		pdf(file=paste('cluster_BIC_',format(Sys.time(),format="%y%m%d_%H%M"),'.pdf',sep=''))
+	pdf(file = paste(reportPath,
+            "cluster_BIC_",
+            format(Sys.time(), format = "%y%m%d_%H%M"),
+            ".pdf",
+            sep = ""
+        ))
 		plot(mclBIC)
 		dev.off()
 	}
@@ -96,7 +101,8 @@ driftCalc=function(QCClust,
                    batchTotalInj,
                    smoothFunc=c('spline','loess'),
                    spar=0.2,
-                   report=FALSE) {
+                   report=FALSE,
+		   reportPath) {
 	MC=QCClust$clust
 	QCInjs=QCClust$QCInjs
 	QCFeats=QCClust$QCFeats
@@ -112,11 +118,17 @@ driftCalc=function(QCClust,
 		ratios=matrix(nrow=nclass,ncol=4)
 		rownames(ratios)=paste('cluster',1:nclass,sep='')
 		colnames(ratios)=c('raw.15','corr.15','raw.2','corr.2')
-	if (report==TRUE) {
-		pdf(file=paste('cluster_G',nclass,'_',format(Sys.time(),format="%y%m%d_%H%M"),'.pdf',sep=''))
-		par(mfrow=c(2,1))
-		par(mar=c(2,4,2,0))
-	}
+	if (report == TRUE) {
+	        pdf(file = paste(reportPath,
+	            "cluster_G",
+	            nclass, "_",
+	            format(Sys.time(), format = "%y%m%d_%H%M"),
+	            ".pdf",
+	            sep = ""
+	        ))
+	        par(mfrow = c(2, 1))
+	        par(mar = c(2, 4, 2, 0))
+    	}
 	### Calculate drift correction for each cluster
 	# Calculate distance on scaled variables
 	rmsdRaw=rmsDist(QCFeats)
@@ -327,7 +339,7 @@ driftCorr=function(QCDriftCalc,refList=NULL,refType=c('none','one','many'),CorrO
 #' @return QCcvs: CVs per features kept within the final peaktable
 #' @noRd
 ## Remove individual variables with CV>limit
-cleanVar=function(QCCorr,CVlimit=.2,report=FALSE) {
+cleanVar=function(QCCorr,CVlimit=.2,report=FALSE, reportPath) {
 	QCFeats=QCCorr$QCFeats
 	removeFeats=QCCorr$removeFeats
 	if (!is.null(removeFeats)) {
@@ -351,7 +363,12 @@ cleanVar=function(QCCorr,CVlimit=.2,report=FALSE) {
 	cvFeatsFinal=mean(cv(QCFeatsFinal)) # 0.1070
 	QCcvs=data.frame(cvFeats=cvFeats,cvFeatsClean=cvFeatsClean,cvFeatsCorr=cvFeatsCorr,cvFeatsFinal=cvFeatsFinal)
 	if (report==TRUE) {
-		pdf(file=paste('Hist_Final_',format(Sys.time(),format="%y%m%d_%H%M"),'.pdf',sep=''))
+		pdf(file = paste(reportPath,
+	            "Hist_Final_",
+	            format(Sys.time(), format = "%y%m%d_%H%M"),
+	            ".pdf",
+	            sep = ""
+		))
 		histCombined <- hist(c(cv(QCFeatsClean), cv(QCFeatsFinal)), 30, plot=FALSE)
 		breaks <- histCombined$breaks
 		histBefore <- hist(cv(QCFeatsClean), breaks = breaks, plot=FALSE)
