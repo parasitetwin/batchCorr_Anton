@@ -69,9 +69,9 @@ correctDrift <- function(peakTable, injections, sampleGroups, QCID='QC', RefID='
   if (RefID!="none") {
     batchRef=.getGroup(peakTable=peakTable, meta=meta, sampleGroup=sampleGroups, select=RefID) # Extract Ref info
     RefObject=makeBatchObject(peakTable = batchRef$peakTable, inj = batchRef$meta$inj, QCObject = QCObject) # Prepare Ref object for drift correction
-    Corr=driftWrap(QCObject = QCObject, BatchObject = BatchObject, RefObject = RefObject, modelNames = modelNames, G = G, smoothFunc = smoothFunc, spar = spar, CVlimit = CVlimit, report = report) # Perform drift correction
+    Corr=driftWrap(QCObject = QCObject, BatchObject = BatchObject, RefObject = RefObject, modelNames = modelNames, G = G, smoothFunc = smoothFunc, spar = spar, CVlimit = CVlimit, report = report, reportPath = reportPath) # Perform drift correction
   } else {
-    Corr=driftWrap(QCObject = QCObject, BatchObject = BatchObject, modelNames = modelNames, G = G, smoothFunc = smoothFunc, spar = spar, CVlimit = CVlimit, report = report) # Perform drift correction
+    Corr=driftWrap(QCObject = QCObject, BatchObject = BatchObject, modelNames = modelNames, G = G, smoothFunc = smoothFunc, spar = spar, CVlimit = CVlimit, report = report, reportPath = reportPath) # Perform drift correction
   }
   return(Corr)
 }
