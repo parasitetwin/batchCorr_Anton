@@ -98,7 +98,8 @@ clust=function(QCInjs,QCFeats,modelNames=c('VVE'),G=seq(1,52,by=3),report=FALSE,
 #' @noRd
 ## Calculate drift clusters
 driftCalc=function(QCClust,
-                   batchTotalInj,
+                   batchInj,
+		   samplesInj,
                    smoothFunc=c('spline','loess'),
                    spar=0.2,
                    report=FALSE,
