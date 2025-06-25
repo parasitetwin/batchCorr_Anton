@@ -222,7 +222,7 @@ driftCalc=function(QCClust,
 #' @importFrom grDevices rgb
 #' @noRd
 ## Perform drift correction for clusters IF rmsdRef is improved
-driftCorr=function(QCDriftCalc,refList=NULL,refType=c('none','one','many'),CorrObj=NULL,report=FALSE) {
+driftCorr=function(QCDriftCalc,refList=NULL,refType=c('none','one','many'),CorrObj=NULL,report=FALSE, reportPath) {
 	if (missing(refType)) refType='none'
 	if (refType=='many') {
 		stop('Multiple reference samples not yet implemented\n')
@@ -292,7 +292,7 @@ driftCorr=function(QCDriftCalc,refList=NULL,refType=c('none','one','many'),CorrO
 		}
 	}
 	if (report==TRUE) {
-		pdf(file=paste('Hist_Corrected_',format(Sys.time(),format="%y%m%d_%H%M"),'.pdf',sep=''))
+		pdf(file=paste(reportPath,'Hist_Corrected_',format(Sys.time(),format="%y%m%d_%H%M"),'.pdf',sep=''))
 	  if (!is.null(removeFeats)) {
 	    cvBefore <- cv(QCDriftCalc$QCFeats)
 	  } else {
