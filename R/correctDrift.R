@@ -60,6 +60,7 @@ correctDrift <- function(peakTable, injections, sampleGroups, QCID='QC', RefID='
   }
   
   meta=data.frame(injections,sampleGroups)
+  meta$injections = meta$injections - (meta$injections[1]-1)
   # Prepare QC data
   batchQC=.getGroup(peakTable=peakTable, meta=meta, sampleGroup=sampleGroups, select=QCID) # Extract QC info
   QCObject=makeQCObject(peakTable = batchQC$peakTable, inj = batchQC$meta$inj) # Prepare QC object for drift correction
