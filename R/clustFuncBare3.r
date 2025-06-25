@@ -153,10 +153,13 @@ driftCalc=function(QCClust,
       Pred$y <- c(Pred$y, rep(Pred$y[length(Pred$y)], 
                               injDiff))
       Pred$x <- c(Pred$x, c((max(Pred$x)+1):(max(Pred$x)+injDiff)))
+	message(nrow(corMat))
+	message(max(samplesInj))
+	message("")
       if(nrow(corMat) < max(samplesInj)){
         corMat <- rbind(corMat, matrix(nrow = injDiff, ncol = ncol(corMat)))
       }
-      message(dim(corMat))
+      message(paste0(dim(corMat)[1],",",dim(corMat)[2])
     }
     corFact = Pred$y[1]/Pred$y
     corMat[, n] = corFact
